@@ -1,2 +1,2 @@
 # DEngine
-Android OpenGL ES 3.0 Engine
+Android OpenGL ES 3.0 Engine with sample
