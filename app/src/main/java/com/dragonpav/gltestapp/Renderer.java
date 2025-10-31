@@ -3,11 +3,10 @@ package com.dragonpav.gltestapp;
 import android.content.Context;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
-import android.opengl.Matrix;
+
 import com.dragonpav.dengine.Camera;
 import com.dragonpav.dengine.CameraTouchControl;
 import com.dragonpav.dengine.Lighting;
-import com.dragonpav.dengine.NormalMap;
 import com.dragonpav.dengine.Object3D;
 import com.dragonpav.dengine.ObjectCreator;
 import com.dragonpav.dengine.Program;
@@ -15,10 +14,7 @@ import com.dragonpav.dengine.RenderUtils;
 import com.dragonpav.dengine.Shader;
 import com.dragonpav.dengine.Texture;
 import com.dragonpav.dengine.Values;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
