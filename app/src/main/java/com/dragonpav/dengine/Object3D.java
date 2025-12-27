@@ -22,10 +22,10 @@ public class Object3D {
 	public FloatBuffer normalBuffer = null;
 	public int vertexBufferSize, indexBufferSize, texBufferSize, normalBufferSize;
 	public Texture texture;
+	public boolean wireframe = false;
 	public void begin() {
 		renderUtils.bindData(vertexBuffer, indexBuffer, texBuffer, vertexBufferSize, indexBufferSize, texBufferSize, normalBuffer, normalBufferSize);
 		Matrix.setIdentityM(model.values, 0);
-		//GLES30.glActiveTexture(texture.glType);
 		GLES30.glBindVertexArray(renderUtils.VAO);
 	}
 	public void render() {

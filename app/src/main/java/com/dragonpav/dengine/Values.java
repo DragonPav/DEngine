@@ -13,6 +13,10 @@ public class Values {
 			}
 			GLES30.glUniform2f(uniform, x, y);
 		}
+		@Override
+		public String toString() {
+			return "X: " + x + " Y: " + y;
+		}
 		public Vector2() {}
 		public Vector2(float x, float y) {
 			this.x = x;
@@ -36,6 +40,10 @@ public class Values {
 				GLES30.glUniform3f(uniform, x, y, z);
 			}
 		}
+		@Override
+		public String toString() {
+			return "X: " + x + " Y: " + y + " Z: " + z;
+		}
 		public Vector3() {}
 		public Vector3(float x, float y, float z) {
 			this.x = x;
@@ -54,6 +62,10 @@ public class Values {
 			if (uniform == -1) {
 				throw new IllegalStateException("uniform is -1");
 			}
+		}
+		@Override
+		public String toString() {
+			return "X: " + x + " Y: " + y + " Z: " + z + " W: " + w;
 		}
 		public Vector4() {}
 		public Vector4(float x, float y, float z, float w) {
@@ -87,6 +99,27 @@ public class Values {
 			if (obj != null && obj.position != null) Matrix.translateM(values, 0, obj.position.x, obj.position.y, obj.position.z);
 			Matrix.scaleM(values, 0, size.x, size.y, size.z);
 			if (obj != null && obj.position != null) Matrix.translateM(values, 0, -obj.position.x, -obj.position.y, -obj.position.z);
+		}
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("[ ");
+			int count = 0;
+			for (int i = 0; i < values.length; i++) {
+				if (i != values.length - 1) {
+					builder.append(values[i]).append(", ");
+				} else {
+					builder.append(values[i]);
+				}
+				if (count == 4) {
+					builder.append('\n');
+					count = 0;
+				} else {
+					count++;
+				}
+			}
+			builder.append(']');
+			return builder.toString();
 		}
 		public Matrix4() {
 			values = new float[16];

@@ -1,12 +1,19 @@
 package com.dragonpav.dengine;
 
 import android.content.Context;
+import android.opengl.EGL14;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
+import android.view.SurfaceHolder;
 import java.util.ArrayList;
 import java.util.Iterator;
+import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLDisplay;
+import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
 
+import javax.microedition.khronos.egl.EGLContext;
 public class Renderer implements GLSurfaceView.Renderer {
 	private double frameCount;
 	private double deltaTime;
@@ -37,6 +44,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 		}
 		lastFpsTime = currentTime;
 	}
+	protected void onStop() {};
 	public double getFPS() {
 		return currentFps;
 	}

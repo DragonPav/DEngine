@@ -21,6 +21,7 @@ public class Shader {
 				builder.append(line).append('\n');
 			}
 			source = builder.toString();
+			file.close();
 		} catch (IOException e) {
 			e.fillInStackTrace();
 		}

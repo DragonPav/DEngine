@@ -13,7 +13,7 @@ public class Texture {
 	public int texSampleNum;
 	public int textureId;
 	public int glType = GLES30.GL_TEXTURE0;
-	public Texture(byte[] rgb, Program p) {
+	public Texture(byte[] rgb, Program p, Config cfg) {
 		this.glType = glType;
 		texSampleNum = GLES30.glGetUniformLocation(p.programId, "textureUnit");
 		byte[] colors = new byte[256 * 256 * 3];
@@ -33,15 +33,17 @@ public class Texture {
 		GLES30.glGenTextures(1, tmpBuf, 0);
 		textureId = tmpBuf[0];
 		GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureId);
-		GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE);
-		GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE);
-		GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR_MIPMAP_LINEAR);
-		GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_NEAREST);
+		GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, cfg.textureWrapS);
+		GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, cfg.textureWrapT);
+		GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, cfg.textureMinFilter);
+		GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, cfg.textureMagFilter);
 		GLES30.glTexImage2D(GLES30.GL_TEXTURE_2D, 0, GLES30.GL_RGB, 256, 256, 0, GLES30.GL_RGB, GLES30.GL_UNSIGNED_BYTE, colorBuffer);
-		GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D);
+		if (cfg.useMipmap) {
+			GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D);
+		}
 		GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, 0);
 	}
-	public Texture(Resources res, int resId, Program p) {
+	public Texture(Resources res, int resId, Program p, Config cfg) {
 		BitmapFactory.Options opts = new BitmapFactory.Options();
 		opts.inScaled = false;
 		Bitmap img = BitmapFactory.decodeResource(res, resId, opts);
@@ -51,13 +53,22 @@ public class Texture {
 		GLES30.glGenTextures(1, tmpBuf, 0);
 		textureId = tmpBuf[0];
 		GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, textureId);
-		GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE);
-		GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE);
-		GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_NEAREST_MIPMAP_LINEAR);
-		GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_NEAREST);
+		GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S, cfg.textureWrapS);
+		GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, cfg.textureWrapT);
+		GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, cfg.textureMinFilter);
+		GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, cfg.textureMagFilter);
 		GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, GLES30.GL_RGBA, img, 0);
-		GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D);
+		if (cfg.useMipmap) {
+			GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D);
+		}
 		GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, 0);
 		img.recycle();
+	}
+	public static class Config {
+		public boolean useMipmap = true;
+		public int textureWrapS = GLES30.GL_CLAMP_TO_EDGE;
+		public int textureWrapT = GLES30.GL_CLAMP_TO_EDGE;
+		public int textureMinFilter = GLES30.GL_NEAREST_MIPMAP_LINEAR;
+		public int textureMagFilter = GLES30.GL_NEAREST;
 	}
 }
