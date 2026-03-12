@@ -46,9 +46,9 @@ public class Renderer extends com.dragonpav.dengine.Renderer {
 		camera.setPos(new Values.Vector3(0.5f, 2, 3));
 		ctt = new CameraTouchControl(rendUtils);
 		camera.setCameraTouchControl(ctt);
-		Texture texture = new Texture(context.getResources(), R.drawable.cat, program);
-		Texture texture2 = new Texture(new byte[] {(byte) 0x50, (byte) 0x50, (byte) 0x50}, program);
-		Texture textureRed = new Texture(new byte[] {(byte) 0xff, 0, 0}, program);
+		Texture texture = new Texture(context.getResources(), R.drawable.cat, program, new Texture.Config());
+		Texture texture2 = new Texture(new byte[] {(byte) 0x50, (byte) 0x50, (byte) 0x50}, program, new Texture.Config());
+		Texture textureRed = new Texture(new byte[] {(byte) 0xff, 0, 0}, program, new Texture.Config());
 		cube = ObjectCreator.createBox(new Values.Vector3(), new Values.Vector3(1, 1, 1), camera, texture);
 		quad = ObjectCreator.createSurface(new Values.Vector3(0, -1, 0), new Values.Vector2(50, 50), camera, texture2);
 		sphere = ObjectCreator.createSphere(new Values.Vector3(0, 0, -3), 1, 36, 18, camera, textureRed);
