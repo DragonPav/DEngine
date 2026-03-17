@@ -1,5 +1,6 @@
 package com.dragonpav.dengine;
 
+import android.annotation.SuppressLint;
 import android.opengl.GLSurfaceView;
 import android.view.MotionEvent;
 import android.view.View;
@@ -10,7 +11,8 @@ public class CameraTouchControl {
 	public CameraTouchControl(RenderUtils renderUtils) {
 		gsv = renderUtils.gsv;
 	}
-	public void setup(Camera camera) {
+	@SuppressLint("ClickableViewAccessibility")
+	protected void setup(Camera camera) {
 		gsv.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {

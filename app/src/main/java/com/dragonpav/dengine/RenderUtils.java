@@ -3,6 +3,9 @@ package com.dragonpav.dengine;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
+
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -59,7 +62,7 @@ public class RenderUtils {
 			GLES30.glUniform1f(GLES30.glGetUniformLocation(p.programId, "useLighting"), 0f);
 		}
 	}
-	public RenderUtils(Program program, Lighting li, GLSurfaceView gsv) {
+	public RenderUtils(Program program, @Nullable Lighting li, GLSurfaceView gsv) {
 		p = program;
 		lighting = li;
 		this.gsv = gsv;

@@ -37,7 +37,6 @@ public class Renderer extends com.dragonpav.dengine.Renderer {
 		GLES30.glUseProgram(program.programId);
 		
 		Lighting lighting = new Lighting(new Values.Vector3(0.5f, 2, 3), program);
-		lighting.lightPos.rgb = new float[] {0.5f, 2, -2};
 		rendUtils = new RenderUtils(program, lighting, gsv);
 		rendUtils.init();
 		
