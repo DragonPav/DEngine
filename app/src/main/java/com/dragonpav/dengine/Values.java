@@ -27,7 +27,7 @@ public class Values {
 		}
 	}
 	public static class Vector3 {
-		public float x, y, z;
+		public float x = 0, y = 0, z = 0;
 		public float[] rgb;
 		public int uniform = -1;
 		public void uniform() {
@@ -58,10 +58,10 @@ public class Values {
 		public float x, y, z, w;
 		public int uniform = -1;
 		public void uniform() {
-			GLES30.glUniform4f(uniform, x, y, z, w);
 			if (uniform == -1) {
 				throw new IllegalStateException("uniform is -1");
 			}
+			GLES30.glUniform4f(uniform, x, y, z, w);
 		}
 		@Override
 		public String toString() {
@@ -82,10 +82,10 @@ public class Values {
 		public float[] values;
 		public int uniform = -1;
 		public void uniform() {
-			GLES30.glUniformMatrix4fv(uniform, 1, false, values, 0);
 			if (uniform == -1) {
 				throw new IllegalStateException("uniform is -1");
 			}
+			GLES30.glUniformMatrix4fv(uniform, 1, false, values, 0);
 		}
 		public void rotate(Vector3 axis, float angle, Object3D obj) {
 			if (obj != null && obj.position != null) Matrix.translateM(values, 0, obj.position.x, obj.position.y, obj.position.z);

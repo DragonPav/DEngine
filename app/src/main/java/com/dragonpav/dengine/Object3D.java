@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.opengl.GLES30;
 import android.opengl.Matrix;
+import android.util.Log;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -22,11 +24,13 @@ public class Object3D {
 	public FloatBuffer normalBuffer = null;
 	public int vertexBufferSize, indexBufferSize, texBufferSize, normalBufferSize;
 	public Texture texture;
-	public boolean wireframe = false;
+	public ObjectBuffer b;
 	public void begin() {
-		renderUtils.bindData(vertexBuffer, indexBuffer, texBuffer, vertexBufferSize, indexBufferSize, texBufferSize, normalBuffer, normalBufferSize);
+		if (renderUtils.lighting != null) {
+			renderUtils.lighting.bind();
+		}
 		Matrix.setIdentityM(model.values, 0);
-		GLES30.glBindVertexArray(renderUtils.VAO);
+		GLES30.glBindVertexArray(b.VAO);
 	}
 	public void render() {
 		model.uniform();
@@ -35,16 +39,53 @@ public class Object3D {
 		if (cam.autoUpdate) {
 			cam.update();
 		}
-		if (texture.texSampleNum == -1) {
-			throw new IllegalStateException("texture.texSampleNum is -1");
-		} else {
+		if (texture.texSampleNum != -1) {
 			GLES30.glUniform1i(texture.texSampleNum, texture.glType % GLES30.GL_TEXTURE0);
 		}
 		GLES30.glDrawElements(GLES30.GL_TRIANGLES, indexBufferSize / 4, GLES30.GL_UNSIGNED_INT, 0);
+		int err;
+		while ((err = GLES30.glGetError()) != GLES30.GL_NO_ERROR) {
+			Log.e("DEngine", String.format("OpenGL error occured: 0x%X", err));
+		}
 	}
 	public void end() {
 		GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, 0);
 		GLES30.glBindVertexArray(0);
+	}
+	public void setup() {
+		b = renderUtils.createStaticVAO(vertexBuffer, indexBuffer, texBuffer, normalBuffer,
+				vertexBufferSize, indexBufferSize, texBufferSize, normalBufferSize);
+	}
+	public void dispose() {
+		end();
+		if (b.VAO != 0) {
+			int[] vaoArray = new int[] {b.VAO};
+			GLES30.glDeleteVertexArrays(1, vaoArray, 0);
+			b.VAO = 0;
+		}
+		int count = 0;
+		if (b.VBO != 0) count++;
+		if (b.VBOtexture != 0) count++;
+		if (b.VBOnormal != 0) count++;
+		if (b.EBO != 0) count++;
+		if (count > 0) {
+			int[] buffersToDelete = new int[count];
+			int index = 0;
+			if (b.VBO != 0) {
+				buffersToDelete[index++] = b.VBO;
+			}
+			if (b.VBOtexture != 0) {
+				buffersToDelete[index++] = b.VBOtexture;
+			}
+			if (b.VBOnormal != 0) {
+				buffersToDelete[index++] = b.VBOnormal;
+			}
+			if (b.EBO != 0) {
+				buffersToDelete[index++] = b.EBO;
+			}
+			b = new ObjectBuffer();
+			GLES30.glDeleteBuffers(count, buffersToDelete, 0);
+		}
 	}
 	public Object3D(Camera camera, RenderUtils rend, Texture tex) {
 		cam = camera;

@@ -10,24 +10,21 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 public class Texture {
-	public int texSampleNum;
+	public int texSampleNum = -1;
 	public int textureId;
 	public int glType = GLES30.GL_TEXTURE0;
 	public Texture(byte[] rgb, Program p, Config cfg) {
-		this.glType = glType;
 		texSampleNum = GLES30.glGetUniformLocation(p.programId, "textureUnit");
-		byte[] colors = new byte[256 * 256 * 3];
+		int num = 256* 256 * 3;
+		byte[] colors = new byte[num];
 		int i = 0;
-		while (i != colors.length) {
-			colors[i] = rgb[0];
-			i++;
-			colors[i] = rgb[1];
-			i++;
-			colors[i] = rgb[2];
-			i++;
+		ByteBuffer colorBuffer = ByteBuffer.allocateDirect(num).order(ByteOrder.nativeOrder());
+		while (i != num) {
+			colorBuffer.put((byte) (rgb[0] & 0xFF));
+			colorBuffer.put((byte) (rgb[1] & 0xFF));
+			colorBuffer.put((byte) (rgb[2] & 0xFF));
+			i += 3;
 		}
-		ByteBuffer colorBuffer = ByteBuffer.allocateDirect(colors.length * 4).order(ByteOrder.nativeOrder());
-		colorBuffer.put(colors);
 		colorBuffer.position(0);
 		int[] tmpBuf = new int[1];
 		GLES30.glGenTextures(1, tmpBuf, 0);
@@ -47,7 +44,6 @@ public class Texture {
 		BitmapFactory.Options opts = new BitmapFactory.Options();
 		opts.inScaled = false;
 		Bitmap img = BitmapFactory.decodeResource(res, resId, opts);
-		this.glType = glType;
 		texSampleNum = GLES30.glGetUniformLocation(p.programId, "textureUnit");
 		int[] tmpBuf = new int[1];
 		GLES30.glGenTextures(1, tmpBuf, 0);
@@ -57,12 +53,23 @@ public class Texture {
 		GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T, cfg.textureWrapT);
 		GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MIN_FILTER, cfg.textureMinFilter);
 		GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_MAG_FILTER, cfg.textureMagFilter);
-		GLUtils.texImage2D(GLES30.GL_TEXTURE_2D, 0, GLES30.GL_RGBA, img, 0);
+		int byteCount = img.getByteCount();
+		ByteBuffer buffer = ByteBuffer.allocateDirect(byteCount).order(ByteOrder.nativeOrder());
+		img.copyPixelsToBuffer(buffer);
+		buffer.position(0);
+		GLES30.glTexImage2D(GLES30.GL_TEXTURE_2D, 0, GLES30.GL_RGBA, img.getWidth(), img.getHeight(), 0, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE, buffer);
 		if (cfg.useMipmap) {
 			GLES30.glGenerateMipmap(GLES30.GL_TEXTURE_2D);
 		}
 		GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, 0);
 		img.recycle();
+	}
+	public void dispose() {
+		if (textureId != 0) {
+			int[] textures = new int[] {textureId};
+			GLES30.glDeleteTextures(1, textures, 0);
+			textureId = 0;
+		}
 	}
 	public static class Config {
 		public boolean useMipmap = true;

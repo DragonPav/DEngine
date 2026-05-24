@@ -6,7 +6,6 @@ in vec2 TexCoord;
 in vec3 FragPos;
 in vec3 Normal;
 uniform sampler2D textureUnit;
-uniform float useLighting;
 uniform vec3 cameraPos;
 struct DirectionLight {
     vec3 direction;
@@ -51,15 +50,11 @@ vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
     return (ambient + diffuse + specular);
 }
 void main() {
-	if (useLighting == 1.0f) {
-	    vec3 norm = normalize(Normal);
-        vec3 viewDir = normalize(cameraPos - FragPos);
-        vec3 result = calcDirLight(dirLight, norm, viewDir);
-        for (int i = 0; i < MAX_POINT_LIGHTS; i++) {
-            result += calcPointLight(pointLights[i], norm, FragPos, viewDir);
-        }
-        color = vec4(result, 1.0f);
-    } else {
-        color = texture(textureUnit, TexCoord);
+	vec3 norm = normalize(Normal);
+    vec3 viewDir = normalize(cameraPos - FragPos);
+    vec3 result = calcDirLight(dirLight, norm, viewDir);
+    for (int i = 0; i < MAX_POINT_LIGHTS; i++) {
+        result += calcPointLight(pointLights[i], norm, FragPos, viewDir);
     }
+    color = vec4(result, 1.0f);
 }

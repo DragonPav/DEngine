@@ -44,7 +44,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 		}
 		lastFpsTime = currentTime;
 	}
-	protected void onStop() {};
+	public void onStop() {};
 	public double getFPS() {
 		return currentFps;
 	}

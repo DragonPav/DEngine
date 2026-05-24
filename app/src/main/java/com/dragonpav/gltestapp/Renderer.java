@@ -3,6 +3,7 @@ package com.dragonpav.gltestapp;
 import android.content.Context;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 
 import com.dragonpav.dengine.Camera;
 import com.dragonpav.dengine.CameraTouchControl;
@@ -25,6 +26,7 @@ public class Renderer extends com.dragonpav.dengine.Renderer {
 	private Camera camera;
 	private CameraTouchControl ctt;
 	private RenderUtils rendUtils;
+	private Texture texture, texture2, textureRed;
 	private float seconds;
 	@Override
 	public void onSurfaceCreated(GL10 unused, EGLConfig config) {
@@ -35,19 +37,16 @@ public class Renderer extends com.dragonpav.dengine.Renderer {
 		program = new Program(vertex, fragment);
 		program.link();
 		GLES30.glUseProgram(program.programId);
-		
 		Lighting lighting = new Lighting(new Values.Vector3(0.5f, 2, 3), program);
 		rendUtils = new RenderUtils(program, lighting, gsv);
-		rendUtils.init();
-		
 		camera = new Camera(rendUtils);
 		camera.lookAt(new Values.Vector3(0, 0, 0));
 		camera.setPos(new Values.Vector3(0.5f, 2, 3));
 		ctt = new CameraTouchControl(rendUtils);
 		camera.setCameraTouchControl(ctt);
-		Texture texture = new Texture(context.getResources(), R.drawable.cat, program, new Texture.Config());
-		Texture texture2 = new Texture(new byte[] {(byte) 0x50, (byte) 0x50, (byte) 0x50}, program, new Texture.Config());
-		Texture textureRed = new Texture(new byte[] {(byte) 0xff, 0, 0}, program, new Texture.Config());
+		texture = new Texture(context.getResources(), R.drawable.cat, program, new Texture.Config());
+		texture2 = new Texture(new byte[] {(byte) 0x50, (byte) 0x50, (byte) 0x50}, program, new Texture.Config());
+		textureRed = new Texture(new byte[] {(byte) 0xff, 0, 0}, program, new Texture.Config());
 		cube = ObjectCreator.createBox(new Values.Vector3(), new Values.Vector3(1, 1, 1), camera, texture);
 		quad = ObjectCreator.createSurface(new Values.Vector3(0, -1, 0), new Values.Vector2(50, 50), camera, texture2);
 		sphere = ObjectCreator.createSphere(new Values.Vector3(0, 0, -3), 1, 36, 18, camera, textureRed);
@@ -74,8 +73,18 @@ public class Renderer extends com.dragonpav.dengine.Renderer {
 		sphere.render();
 		sphere.end();
 	}
+
+	@Override
+	public void onStop() {
+		quad.dispose();
+		cube.dispose();
+		sphere.dispose();
+		texture.dispose();
+		texture2.dispose();
+		textureRed.dispose();
+	}
 	public void tick() {
-		seconds += 0.01;
+		seconds += 0.01f;
 	}
 	public Renderer(Context ctx, GLSurfaceView gsv) {
 		super(ctx, gsv);

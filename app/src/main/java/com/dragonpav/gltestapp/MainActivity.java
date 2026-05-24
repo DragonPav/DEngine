@@ -23,7 +23,6 @@ public class MainActivity extends Activity {
 		gsv.setEGLContextClientVersion(3);
 		r = new Renderer(this, gsv);
 		gsv.setRenderer(r);
-		
     }
 	@Override
 	protected void onResume() {
@@ -31,14 +30,16 @@ public class MainActivity extends Activity {
 		if (gsv != null) {
 			gsv.onResume();
 		}
-		t = new Timer("SecondCounter");
+		if (t == null && t2 == null) {
+			t = new Timer("SecondCounter");
+			t2 = new Timer("FpsUpdater");
+		}
 		t.schedule(new TimerTask() {
 			@Override
 			public void run() {
 				r.tick();
 			}
 		}, 0, 10L);
-		t2 = new Timer("FpsUpdater");
 		t2.schedule(new TimerTask() {
 			@Override
 			public void run() {
@@ -57,5 +58,20 @@ public class MainActivity extends Activity {
 		t2.cancel();
 		t = null;
 		t2 = null;
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (gsv != null) {
+			gsv.queueEvent(new Runnable() {
+				@Override
+				public void run() {
+					if (r != null) {
+						r.onStop();
+					}
+				}
+			});
+		}
 	}
 }

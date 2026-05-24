@@ -32,10 +32,11 @@ public class ObjectCreator {
 			ret.normalBuffer.put(normals);
 			ret.normalBuffer.position(0);
 		}
-		ret.vertexBufferSize = verts.length * 4;
-		ret.indexBufferSize = indxs.length * 4;
-		ret.texBufferSize = texCoords.length * 4;
-		ret.normalBufferSize = normals.length * 4;
+		ret.vertexBufferSize = verts.length * Float.BYTES;
+		ret.indexBufferSize = indxs.length * Integer.BYTES;
+		ret.texBufferSize = texCoords.length * Float.BYTES;
+		ret.normalBufferSize = normals.length * Float.BYTES;
+		ret.setup();
 		return ret;
 	}
 	public static Object3D createBox(Values.Vector3 pos, Values.Vector3 size, Camera camera, Texture tex) {
@@ -189,6 +190,7 @@ public class ObjectCreator {
 		ret.indexBufferSize = indices.length * 4;
 		ret.texBufferSize = texCoords.length * 4;
 		ret.normalBufferSize = normals.length * 4;
+		ret.setup();
 		return ret;
 	}
 	public static Object3D createQuad(Values.Vector3 pos, Values.Vector2 size, Camera camera, Texture tex) {
@@ -221,32 +223,33 @@ public class ObjectCreator {
 			};
 		}
 		ret.position = pos;
-		ret.vertexBuffer = ByteBuffer.allocateDirect(vertices.length * 4)
-			.order(ByteOrder.nativeOrder())
-			.asFloatBuffer();
+		ret.vertexBuffer = ByteBuffer.allocateDirect(vertices.length * Float.BYTES)
+				.order(ByteOrder.nativeOrder())
+				.asFloatBuffer();
 		ret.vertexBuffer.put(vertices);
 		ret.vertexBuffer.position(0);
-		ret.indexBuffer = ByteBuffer.allocateDirect(indices.length * 4)
-			.order(ByteOrder.nativeOrder())
-			.asIntBuffer();
+		ret.indexBuffer = ByteBuffer.allocateDirect(indices.length * Integer.BYTES)
+				.order(ByteOrder.nativeOrder())
+				.asIntBuffer();
 		ret.indexBuffer.put(indices);
 		ret.indexBuffer.position(0);
-		ret.texBuffer = ByteBuffer.allocateDirect(texCoords.length * 4)
-			.order(ByteOrder.nativeOrder())
-			.asFloatBuffer();
+		ret.texBuffer = ByteBuffer.allocateDirect(texCoords.length * Float.BYTES)
+				.order(ByteOrder.nativeOrder())
+				.asFloatBuffer();
 		ret.texBuffer.put(texCoords);
 		ret.texBuffer.position(0);
 		if (camera.rendUtils.lighting != null) {
-			ret.normalBuffer = ByteBuffer.allocateDirect(normals.length * 4)
-				.order(ByteOrder.nativeOrder())
-				.asFloatBuffer();
+			ret.normalBuffer = ByteBuffer.allocateDirect(normals.length * Float.BYTES)
+					.order(ByteOrder.nativeOrder())
+					.asFloatBuffer();
 			ret.normalBuffer.put(normals);
 			ret.normalBuffer.position(0);
 		}
-		ret.vertexBufferSize = vertices.length * 4;
-		ret.indexBufferSize = indices.length * 4;
-		ret.texBufferSize = texCoords.length * 4;
-		ret.normalBufferSize = normals.length * 4;
+		ret.vertexBufferSize = vertices.length * Float.BYTES;
+		ret.indexBufferSize = indices.length * Integer.BYTES;
+		ret.texBufferSize = texCoords.length * Float.BYTES;
+		ret.normalBufferSize = normals.length * Float.BYTES;
+		ret.setup();
 		return ret;
 	}
 	public static Object3D createSurface(Values.Vector3 pos, Values.Vector2 size, Camera camera, Texture texture) {
@@ -279,32 +282,33 @@ public class ObjectCreator {
 			};
 		}
 		ret.position = pos;
-		ret.vertexBuffer = ByteBuffer.allocateDirect(vertices.length * 4)
-			.order(ByteOrder.nativeOrder())
-			.asFloatBuffer();
+		ret.vertexBuffer = ByteBuffer.allocateDirect(vertices.length * Float.BYTES)
+				.order(ByteOrder.nativeOrder())
+				.asFloatBuffer();
 		ret.vertexBuffer.put(vertices);
 		ret.vertexBuffer.position(0);
-		ret.indexBuffer = ByteBuffer.allocateDirect(indices.length * 4)
-			.order(ByteOrder.nativeOrder())
-			.asIntBuffer();
+		ret.indexBuffer = ByteBuffer.allocateDirect(indices.length * Integer.BYTES)
+				.order(ByteOrder.nativeOrder())
+				.asIntBuffer();
 		ret.indexBuffer.put(indices);
 		ret.indexBuffer.position(0);
-		ret.texBuffer = ByteBuffer.allocateDirect(texCoords.length * 4)
-			.order(ByteOrder.nativeOrder())
-			.asFloatBuffer();
+		ret.texBuffer = ByteBuffer.allocateDirect(texCoords.length * Float.BYTES)
+				.order(ByteOrder.nativeOrder())
+				.asFloatBuffer();
 		ret.texBuffer.put(texCoords);
 		ret.texBuffer.position(0);
 		if (camera.rendUtils.lighting != null) {
-			ret.normalBuffer = ByteBuffer.allocateDirect(normals.length * 4)
-				.order(ByteOrder.nativeOrder())
-				.asFloatBuffer();
+			ret.normalBuffer = ByteBuffer.allocateDirect(normals.length * Float.BYTES)
+					.order(ByteOrder.nativeOrder())
+					.asFloatBuffer();
 			ret.normalBuffer.put(normals);
 			ret.normalBuffer.position(0);
 		}
-		ret.vertexBufferSize = vertices.length * 4;
-		ret.indexBufferSize = indices.length * 4;
-		ret.texBufferSize = texCoords.length * 4;
-		ret.normalBufferSize = normals.length * 4;
+		ret.vertexBufferSize = vertices.length * Float.BYTES;
+		ret.indexBufferSize = indices.length * Integer.BYTES;
+		ret.texBufferSize = texCoords.length * Float.BYTES;
+		ret.normalBufferSize = normals.length * Float.BYTES;
+		ret.setup();
 		return ret;
 	}
 	public static Object3D createSphere(Values.Vector3 pos, float radius, int sectorCount, int stackCount, Camera cam, Texture texture) {
@@ -381,32 +385,33 @@ public class ObjectCreator {
 		indices.clear();
 		texCoords.clear();
 		normals.clear();
-		ret.vertexBuffer = ByteBuffer.allocateDirect(verticesArr.length * 4)
+		ret.vertexBuffer = ByteBuffer.allocateDirect(verticesArr.length * Float.BYTES)
 			.order(ByteOrder.nativeOrder())
 			.asFloatBuffer();
 		ret.vertexBuffer.put(verticesArr);
 		ret.vertexBuffer.position(0);
-		ret.indexBuffer = ByteBuffer.allocateDirect(indicesArr.length * 4)
+		ret.indexBuffer = ByteBuffer.allocateDirect(indicesArr.length * Integer.BYTES)
 			.order(ByteOrder.nativeOrder())
 			.asIntBuffer();
 		ret.indexBuffer.put(indicesArr);
 		ret.indexBuffer.position(0);
-		ret.texBuffer = ByteBuffer.allocateDirect(texCoordsArr.length * 4)
+		ret.texBuffer = ByteBuffer.allocateDirect(texCoordsArr.length * Float.BYTES)
 			.order(ByteOrder.nativeOrder())
 			.asFloatBuffer();
 		ret.texBuffer.put(texCoordsArr);
 		ret.texBuffer.position(0);
 		if (cam.rendUtils.lighting != null) {
-			ret.normalBuffer = ByteBuffer.allocateDirect(normalsArr.length * 4)
+			ret.normalBuffer = ByteBuffer.allocateDirect(normalsArr.length * Float.BYTES)
 				.order(ByteOrder.nativeOrder())
 				.asFloatBuffer();
 			ret.normalBuffer.put(normalsArr);
 			ret.normalBuffer.position(0);
 		}
-		ret.vertexBufferSize = verticesArr.length * 4;
-		ret.indexBufferSize = indicesArr.length * 4;
-		ret.texBufferSize = texCoordsArr.length * 4;
-		ret.normalBufferSize = normalsArr.length * 4;
+		ret.vertexBufferSize = verticesArr.length * Float.BYTES;
+		ret.indexBufferSize = indicesArr.length * Integer.BYTES;
+		ret.texBufferSize = texCoordsArr.length * Float.BYTES;
+		ret.normalBufferSize = normalsArr.length * Float.BYTES;
+		ret.setup();
 		return ret;
 	}
 }
