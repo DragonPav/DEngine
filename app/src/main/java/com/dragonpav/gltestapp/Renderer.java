@@ -3,7 +3,6 @@ package com.dragonpav.gltestapp;
 import android.content.Context;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
-import android.util.Log;
 
 import com.dragonpav.dengine.Camera;
 import com.dragonpav.dengine.CameraTouchControl;
