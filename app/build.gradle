@@ -31,8 +31,8 @@ android {
         targetCompatibility JavaVersion.VERSION_11
     }
 }
-
 dependencies {
+    implementation("io.github.kotlin-graphics:glm:0.9.9.1-15")
     implementation libs.material
     implementation libs.activity
     testImplementation libs.junit

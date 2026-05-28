@@ -5,13 +5,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.opengl.GLES30;
-import android.opengl.Matrix;
 import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+
+import glm_.mat4x4.Mat4;
 
 public class Object3D {
 	public Values.Vector3 position;
@@ -25,11 +26,13 @@ public class Object3D {
 	public int vertexBufferSize, indexBufferSize, texBufferSize, normalBufferSize;
 	public Texture texture;
 	public ObjectBuffer b;
+	public BoundingBox bounds;
+	public int polygonMode = GLES30.GL_TRIANGLES;
 	public void begin() {
 		if (renderUtils.lighting != null) {
 			renderUtils.lighting.bind();
 		}
-		Matrix.setIdentityM(model.values, 0);
+		model.values = new Mat4(1.0f);
 		GLES30.glBindVertexArray(b.VAO);
 	}
 	public void render() {
@@ -42,7 +45,7 @@ public class Object3D {
 		if (texture.texSampleNum != -1) {
 			GLES30.glUniform1i(texture.texSampleNum, texture.glType % GLES30.GL_TEXTURE0);
 		}
-		GLES30.glDrawElements(GLES30.GL_TRIANGLES, indexBufferSize / 4, GLES30.GL_UNSIGNED_INT, 0);
+		GLES30.glDrawElements(polygonMode, indexBufferSize / 4, GLES30.GL_UNSIGNED_INT, 0);
 		int err;
 		while ((err = GLES30.glGetError()) != GLES30.GL_NO_ERROR) {
 			Log.e("DEngine", String.format("OpenGL error occured: 0x%X", err));

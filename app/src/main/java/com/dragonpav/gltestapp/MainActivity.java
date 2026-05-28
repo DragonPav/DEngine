@@ -33,36 +33,27 @@ public class MainActivity extends Activity {
 		if (t == null && t2 == null) {
 			t = new Timer("SecondCounter");
 			t2 = new Timer("FpsUpdater");
+			t.schedule(new TimerTask() {
+				@Override
+				public void run() {
+					r.tick();
+				}
+			}, 0, 10L);
+			t2.schedule(new TimerTask() {
+				@Override
+				public void run() {
+					runOnUiThread(() -> {
+						double fps = r.getFPS();
+						fpsTextView.setText(String.format("FPS: %.1f", fps));
+					});
+				}
+			}, 0, 100L);
 		}
-		t.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				r.tick();
-			}
-		}, 0, 10L);
-		t2.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				runOnUiThread(() -> {
-                    double fps = r.getFPS();
-                    fpsTextView.setText(String.format("FPS: %.1f", fps));
-                });
-			}
-		}, 0, 100L);
 	}
 	@Override
 	protected void onPause() {
 		super.onPause();
 		gsv.onPause();
-		t.cancel();
-		t2.cancel();
-		t = null;
-		t2 = null;
-	}
-
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
 		if (gsv != null) {
 			gsv.queueEvent(new Runnable() {
 				@Override
@@ -73,5 +64,9 @@ public class MainActivity extends Activity {
 				}
 			});
 		}
+		t.cancel();
+		t2.cancel();
+		t = null;
+		t2 = null;
 	}
 }

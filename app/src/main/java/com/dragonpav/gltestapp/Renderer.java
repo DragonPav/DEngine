@@ -3,6 +3,7 @@ package com.dragonpav.gltestapp;
 import android.content.Context;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 
 import com.dragonpav.dengine.Camera;
 import com.dragonpav.dengine.CameraTouchControl;
@@ -21,7 +22,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class Renderer extends com.dragonpav.dengine.Renderer {
 	private Shader vertex, fragment;
 	private Program program;
-	private Object3D cube, sphere, quad;
+	private Object3D cube, sphere, quad, bbDebug;
 	private Camera camera;
 	private CameraTouchControl ctt;
 	private RenderUtils rendUtils;
@@ -49,6 +50,7 @@ public class Renderer extends com.dragonpav.dengine.Renderer {
 		cube = ObjectCreator.createBox(new Values.Vector3(), new Values.Vector3(1, 1, 1), camera, texture);
 		quad = ObjectCreator.createSurface(new Values.Vector3(0, -1, 0), new Values.Vector2(50, 50), camera, texture2);
 		sphere = ObjectCreator.createSphere(new Values.Vector3(0, 0, -3), 1, 36, 18, camera, textureRed);
+		bbDebug = ObjectCreator.createBoxWireframe(sphere.bounds.getCenter(), sphere.bounds.getSizes(), camera, texture2);
 		GLES30.glEnable(GLES30.GL_DEPTH_TEST);
 	}
 	@Override
@@ -71,6 +73,11 @@ public class Renderer extends com.dragonpav.dengine.Renderer {
 		sphere.begin();
 		sphere.render();
 		sphere.end();
+		if (camera.isPointerOverBoundingBox(camera.pointerPosX, camera.pointerPosY, sphere.bounds)) {
+			bbDebug.begin();
+			bbDebug.render();
+			bbDebug.end();
+		}
 	}
 
 	@Override

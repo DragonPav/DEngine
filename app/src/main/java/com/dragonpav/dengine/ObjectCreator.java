@@ -164,6 +164,9 @@ public class ObjectCreator {
 			};
 		}
 		ret.position = pos;
+		Values.Vector3 min = new Values.Vector3(pos.x - halfWidth, pos.y - halfHeight, pos.z - halfDepth);
+		Values.Vector3 max = new Values.Vector3(pos.x + halfWidth, pos.y + halfHeight, pos.z + halfDepth);
+		ret.bounds = new BoundingBox(min, max);
 		ret.vertexBuffer = ByteBuffer.allocateDirect(vertices.length * 4)
 			.order(ByteOrder.nativeOrder())
 			.asFloatBuffer();
@@ -223,6 +226,9 @@ public class ObjectCreator {
 			};
 		}
 		ret.position = pos;
+		Values.Vector3 min = new Values.Vector3(pos.x - halfWidth, pos.y - halfHeight, pos.z);
+		Values.Vector3 max = new Values.Vector3(pos.x + halfWidth, pos.y + halfHeight, pos.z);
+		ret.bounds = new BoundingBox(min, max);
 		ret.vertexBuffer = ByteBuffer.allocateDirect(vertices.length * Float.BYTES)
 				.order(ByteOrder.nativeOrder())
 				.asFloatBuffer();
@@ -282,6 +288,9 @@ public class ObjectCreator {
 			};
 		}
 		ret.position = pos;
+		Values.Vector3 min = new Values.Vector3(pos.x - halfWidth, pos.y, pos.z - halfDepth);
+		Values.Vector3 max = new Values.Vector3(pos.x + halfWidth, pos.y, pos.z + halfDepth);
+		ret.bounds = new BoundingBox(min, max);
 		ret.vertexBuffer = ByteBuffer.allocateDirect(vertices.length * Float.BYTES)
 				.order(ByteOrder.nativeOrder())
 				.asFloatBuffer();
@@ -364,6 +373,10 @@ public class ObjectCreator {
 				}
 			}
 		}
+		ret.bounds = new BoundingBox(
+				new Values.Vector3(pos.x - radius, pos.y - radius, pos.z - radius),
+				new Values.Vector3(pos.x + radius, pos.y + radius, pos.z + radius)
+		);
 		ret.position = pos;
 		float[] verticesArr = new float[vertices.size()];
 		int[] indicesArr = new int[indices.size()];
@@ -411,6 +424,176 @@ public class ObjectCreator {
 		ret.indexBufferSize = indicesArr.length * Integer.BYTES;
 		ret.texBufferSize = texCoordsArr.length * Float.BYTES;
 		ret.normalBufferSize = normalsArr.length * Float.BYTES;
+		ret.setup();
+		return ret;
+	}
+	public static Object3D createBoxWireframe(Values.Vector3 pos, Values.Vector3 size, Camera camera, Texture tex) {
+		Object3D ret = new Object3D(camera, camera.rendUtils, tex);
+		float halfWidth = size.x / 2;
+		float halfHeight = size.y / 2;
+		float halfDepth = size.z / 2;
+		float[] vertices = {
+				//back
+				pos.x - halfWidth, pos.y - halfHeight, pos.z + halfDepth,
+				pos.x + halfWidth, pos.y - halfHeight, pos.z + halfDepth,
+				pos.x - halfWidth, pos.y + halfHeight, pos.z + halfDepth,
+				pos.x + halfWidth, pos.y + halfHeight, pos.z + halfDepth,
+				//left
+				pos.x - halfWidth, pos.y - halfHeight, pos.z - halfDepth,
+				pos.x - halfWidth, pos.y - halfHeight, pos.z + halfDepth,
+				pos.x - halfWidth, pos.y + halfHeight, pos.z - halfDepth,
+				pos.x - halfWidth, pos.y + halfHeight, pos.z + halfDepth,
+				//front
+				pos.x - halfWidth, pos.y - halfHeight, pos.z - halfDepth,
+				pos.x + halfWidth, pos.y - halfHeight, pos.z - halfDepth,
+				pos.x - halfWidth, pos.y + halfHeight, pos.z - halfDepth,
+				pos.x + halfWidth, pos.y + halfHeight, pos.z - halfDepth,
+				//right
+				pos.x + halfWidth, pos.y - halfHeight, pos.z + halfDepth,
+				pos.x + halfWidth, pos.y - halfHeight, pos.z - halfDepth,
+				pos.x + halfWidth, pos.y + halfHeight, pos.z + halfDepth,
+				pos.x + halfWidth, pos.y + halfHeight, pos.z - halfDepth,
+				//top
+				pos.x - halfWidth, pos.y + halfHeight, pos.z + halfDepth,
+				pos.x + halfWidth, pos.y + halfHeight, pos.z + halfDepth,
+				pos.x - halfWidth, pos.y + halfHeight, pos.z - halfDepth,
+				pos.x + halfWidth, pos.y + halfHeight, pos.z - halfDepth,
+				//bottom
+				pos.x - halfWidth, pos.y - halfHeight, pos.z + halfDepth,
+				pos.x + halfWidth, pos.y - halfHeight, pos.z + halfDepth,
+				pos.x - halfWidth, pos.y - halfHeight, pos.z - halfDepth,
+				pos.x + halfWidth, pos.y - halfHeight, pos.z - halfDepth
+		};
+		int[] indices = {
+				//back
+				0, 1,
+				1, 2,
+				2, 0,
+				2, 3,
+				//left
+				4, 5,
+				5, 6,
+				6, 4,
+				6, 7,
+				//front
+				8, 9,
+				9, 10,
+				10, 8,
+				10, 11,
+				//right
+				12, 13,
+				13, 14,
+				14, 12,
+				14, 15,
+				//top
+				16, 17,
+				17, 18,
+				18, 16,
+				18, 19,
+				//bottom
+				20, 21,
+				21, 22,
+				22, 20,
+				22, 23
+		};
+		float[] texCoords = new float[] {
+				//back
+				0, 1,
+				1, 1,
+				0, 0,
+				1, 0,
+				//left
+				0, 1,
+				1, 1,
+				0, 0,
+				1, 0,
+				//front
+				1, 1,
+				0, 1,
+				1, 0,
+				0, 0,
+				//right
+				0, 1,
+				1, 1,
+				0, 0,
+				1, 0,
+				//top
+				0, 1,
+				1, 1,
+				0, 0,
+				1, 0,
+				//bottom
+				1, 1,
+				0, 1,
+				1, 0,
+				0, 0
+		};
+		float[] normals = new float[0];
+		if (camera.rendUtils.lighting != null) {
+			normals = new float[] {
+					//back
+					0, 0, 1,
+					0, 0, 1,
+					0, 0, 1,
+					0, 0, 1,
+					//left
+					-1, 0, 0,
+					-1, 0, 0,
+					-1, 0, 0,
+					-1, 0, 0,
+					//front
+					0, 0, -1,
+					0, 0, -1,
+					0, 0, -1,
+					0, 0, -1,
+					//right
+					1, 0, 0,
+					1, 0, 0,
+					1, 0, 0,
+					1, 0, 0,
+					//top
+					0, 1, 0,
+					0, 1, 0,
+					0, 1, 0,
+					0, 1, 0,
+					//bottom
+					0, -1, 0,
+					0, -1, 0,
+					0, -1, 0,
+					0, -1, 0
+			};
+		}
+		ret.position = pos;
+		Values.Vector3 min = new Values.Vector3(pos.x - halfWidth, pos.y - halfHeight, pos.z - halfDepth);
+		Values.Vector3 max = new Values.Vector3(pos.x + halfWidth, pos.y + halfHeight, pos.z + halfDepth);
+		ret.bounds = new BoundingBox(min, max);
+		ret.vertexBuffer = ByteBuffer.allocateDirect(vertices.length * 4)
+				.order(ByteOrder.nativeOrder())
+				.asFloatBuffer();
+		ret.vertexBuffer.put(vertices);
+		ret.vertexBuffer.position(0);
+		ret.indexBuffer = ByteBuffer.allocateDirect(indices.length * 4)
+				.order(ByteOrder.nativeOrder())
+				.asIntBuffer();
+		ret.indexBuffer.put(indices);
+		ret.indexBuffer.position(0);
+		ret.texBuffer = ByteBuffer.allocateDirect(texCoords.length * 4)
+				.order(ByteOrder.nativeOrder())
+				.asFloatBuffer();
+		ret.texBuffer.put(texCoords);
+		ret.texBuffer.position(0);
+		if (camera.rendUtils.lighting != null) {
+			ret.normalBuffer = ByteBuffer.allocateDirect(normals.length * 4)
+					.order(ByteOrder.nativeOrder())
+					.asFloatBuffer();
+			ret.normalBuffer.put(normals);
+			ret.normalBuffer.position(0);
+		}
+		ret.polygonMode = GLES30.GL_LINES;
+		ret.vertexBufferSize = vertices.length * 4;
+		ret.indexBufferSize = indices.length * 4;
+		ret.texBufferSize = texCoords.length * 4;
+		ret.normalBufferSize = normals.length * 4;
 		ret.setup();
 		return ret;
 	}

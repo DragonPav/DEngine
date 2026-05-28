@@ -1,7 +1,6 @@
 package com.dragonpav.dengine;
 
 import android.opengl.GLES30;
-import android.opengl.Matrix;
 import android.util.Log;
 
 import java.nio.ByteBuffer;
@@ -9,6 +8,8 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+
+import glm_.mat4x4.Mat4;
 
 public class StaticModel {
     public Values.Matrix4 model;
@@ -75,7 +76,7 @@ public class StaticModel {
         b = renderUtils.createStaticVAO(vertexBuffer, indexBuffer, texBuffer, normalBuffer, vertBufSize, indexBufSize, texBufSize, normalBufSize);
     }
     public void begin() {
-        Matrix.setIdentityM(model.values, 0);
+        model.values = new Mat4(1.0f);
         GLES30.glBindVertexArray(b.VAO);
     }
     public void render() {

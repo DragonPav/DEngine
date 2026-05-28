@@ -52,6 +52,8 @@ public class CameraTouchControl {
 					}
 				} else if (event.getPointerCount() == 1) {
 					if (action == MotionEvent.ACTION_DOWN) {
+						camera.pointerPosX = event.getX();
+						camera.pointerPosY = event.getY();
 						lastX = event.getX();
 						lastY = event.getY();
 					} else if (action == MotionEvent.ACTION_MOVE) {
@@ -66,6 +68,9 @@ public class CameraTouchControl {
 						if (pitch > 89.0f) pitch = 89.0f;
 						if (pitch < -89.0f) pitch = -89.0f;
 						updateCameraPos(camera);
+					} else if (action == MotionEvent.ACTION_UP) {
+						camera.pointerPosX = -1;
+						camera.pointerPosY = -1;
 					}
 				}
 				return true;

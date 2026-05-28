@@ -1,7 +1,8 @@
 package com.dragonpav.dengine;
 
 import android.opengl.GLES30;
-import android.opengl.Matrix;
+
+import glm_.mat4x4.Mat4;
 
 public class Values {
 	public static class Vector2 {
@@ -79,37 +80,37 @@ public class Values {
 		}
 	}
 	public static class Matrix4 {
-		public float[] values;
 		public int uniform = -1;
+		public Mat4 values;
 		public void uniform() {
 			if (uniform == -1) {
 				throw new IllegalStateException("uniform is -1");
 			}
-			GLES30.glUniformMatrix4fv(uniform, 1, false, values, 0);
+			GLES30.glUniformMatrix4fv(uniform, 1, false, values.array, 0);
 		}
 		public void rotate(Vector3 axis, float angle, Object3D obj) {
-			if (obj != null && obj.position != null) Matrix.translateM(values, 0, obj.position.x, obj.position.y, obj.position.z);
-			Matrix.rotateM(values, 0, angle, axis.x, axis.y, axis.z);
-			if (obj != null && obj.position != null) Matrix.translateM(values, 0, -obj.position.x, -obj.position.y, -obj.position.z);
+			if (obj != null && obj.position != null) values.translate(obj.position.x, obj.position.y, obj.position.z);
+			values.rotate(angle, axis.x, axis.y, axis.z);
+			if (obj != null && obj.position != null) values.translate(-obj.position.x, -obj.position.y, -obj.position.z);
 		}
 		public void translate(Vector3 pos) {
-			Matrix.translateM(values, 0, pos.x, pos.y, pos.z);
+			values.translate(pos.x, pos.y, pos.z);
 		}
 		public void scale(Vector3 size, Object3D obj) {
-			if (obj != null && obj.position != null) Matrix.translateM(values, 0, obj.position.x, obj.position.y, obj.position.z);
-			Matrix.scaleM(values, 0, size.x, size.y, size.z);
-			if (obj != null && obj.position != null) Matrix.translateM(values, 0, -obj.position.x, -obj.position.y, -obj.position.z);
+			if (obj != null && obj.position != null) values.translate(obj.position.x, obj.position.y, obj.position.z);
+			values.scale(size.x, size.y, size.z);
+			if (obj != null && obj.position != null) values.translate(-obj.position.x, -obj.position.y, -obj.position.z);
 		}
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
 			builder.append("[ ");
 			int count = 0;
-			for (int i = 0; i < values.length; i++) {
-				if (i != values.length - 1) {
-					builder.append(values[i]).append(", ");
+			for (int i = 0; i < values.size(); i++) {
+				if (i != values.size() - 1) {
+					builder.append(values.get(i)).append(", ");
 				} else {
-					builder.append(values[i]);
+					builder.append(values.get(i));
 				}
 				if (count == 4) {
 					builder.append('\n');
@@ -122,10 +123,10 @@ public class Values {
 			return builder.toString();
 		}
 		public Matrix4() {
-			values = new float[16];
+			values = new Mat4();
 		}
 		public Matrix4(int loc) {
-			values = new float[16];
+			values = new Mat4();
 			uniform = loc;
 		}
 	}
