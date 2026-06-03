@@ -3,25 +3,28 @@ plugins {
 }
 
 android {
-    namespace 'com.dragonpav.gltestapp'
-    compileSdk 36
+    namespace 'com.dragonpav.dengine'
+    compileSdk {
+        version = release(36) {
+            minorApiLevel = 1
+        }
+    }
 
     defaultConfig {
-        applicationId "com.dragonpav.gltestapp"
-        minSdk 33
+        applicationId "com.dragonpav.dengine"
+        minSdk 31
         targetSdk 36
         versionCode 1
         versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                cppFlags '-std=c++17'
+            }
+        }
     }
 
     buildTypes {
         release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-        debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -30,12 +33,19 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+    externalNativeBuild {
+        cmake {
+            path file('src/main/cpp/CMakeLists.txt')
+            version '3.22.1'
+        }
+    }
+    buildFeatures {
+        viewBinding true
+    }
 }
+
 dependencies {
-    implementation("io.github.kotlin-graphics:glm:0.9.9.1-15")
+    implementation libs.appcompat
     implementation libs.material
-    implementation libs.activity
-    testImplementation libs.junit
-    androidTestImplementation libs.ext.junit
-    androidTestImplementation libs.espresso.core
+    implementation libs.constraintlayout
 }
