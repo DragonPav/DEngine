@@ -37,16 +37,15 @@ Texture::Texture(Program* p, AAsset* file, Config cfg) {
     int width = AImageDecoderHeaderInfo_getWidth(header);
     int height = AImageDecoderHeaderInfo_getHeight(header);
     int format = AImageDecoderHeaderInfo_getAndroidBitmapFormat(header);
-    if (format != ANDROID_BITMAP_FORMAT_RGB_565) {
-        __android_log_write(ANDROID_LOG_ERROR, "DEngine", "No such format");
-        AImageDecoder_delete(decoder);
-        return;
+    if (format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
+		AImageDecoder_setAndroidBitmapFormat(decoder, ANDROID_BITMAP_FORMAT_RGBA_8888);
     }
-	size_t size = width * height * 3;
-    int stride = AImageDecoder_getMinimumStride(decoder);
+	size_t stride = AImageDecoder_getMinimumStride(decoder);
+	size_t size = stride * height;
+	colorBuffer.resize(size);
     int decodeResult = AImageDecoder_decodeImage(decoder, colorBuffer.data(), stride, size);
 	if (decodeResult != ANDROID_IMAGE_DECODER_SUCCESS) {
-        __android_log_write(ANDROID_LOG_ERROR, "DEngine", "Failed to decode texture");
+        __android_log_write(ANDROID_LOG_ERROR, "DEngine", (std::string("Failed to decode texture: ") + AImageDecoder_resultToString(decodeResult)).c_str());
         return;
     }
 	GLuint tmpBuf[1];
@@ -57,7 +56,7 @@ Texture::Texture(Program* p, AAsset* file, Config cfg) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, cfg.textureWrapT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, cfg.textureMinFilter);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, cfg.textureMagFilter);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, colorBuffer.data());
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, colorBuffer.data());
 	if (glGetError() != GL_NO_ERROR) {
 		std::cerr << "Texture setup failure: gl error: " << glGetError() << std::endl;
 	}

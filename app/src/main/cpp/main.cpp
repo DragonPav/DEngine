@@ -55,9 +55,10 @@ extern "C" {
         RenderUtils* re = new RenderUtils(program, li, widt, heigh);
         cam = new Camera(re);
         cam->setPos(Vector3(4, 2, 2));
-        Texture* red = new Texture({0xff, 0, 0}, program, Texture::Config());
+        AAsset* tex1 = AAssetManager_open(mgr, "sand.png", AASSET_MODE_BUFFER);
+        Texture* sand = new Texture(program, tex1, Texture::Config());
         Texture* green = new Texture({0, 0xff, 0}, program, Texture::Config());
-        terrain = new Object3D(ObjectCreator::createTerrain(Vector3(0, 0, 0), 200, 200, 0.03f, 0.02f, 0.4f, cam, red));
+        terrain = new Object3D(ObjectCreator::createTerrain(Vector3(0, 0, 0), 200, 200, 0.03f, 0.02f, 0.4f, cam, sand));
         box = new Object3D(ObjectCreator::createBox(Vector3(0, 1, 0), Vector3(1, 1, 1), cam, green));
         cc = new CameraControl();
         cam->setCameraControl(cc);
