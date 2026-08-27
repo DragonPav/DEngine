@@ -23,6 +23,7 @@ public:
 	float pitch = 0.0f;
 	float radius = 4.0f;
 	float sensitivity = 0.01f;
+	bool firstPress = false;
 	// @brief This function is only for Camera
 	void setup(Camera* camera);
 	void setSensitivity(float sense);
