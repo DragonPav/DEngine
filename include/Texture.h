@@ -11,6 +11,8 @@ private:
 	GLuint textureId = 0;
 	std::vector<GLubyte> colorBuffer;
 	GLint glType = GL_TEXTURE0;
+	int width = 0;
+	int height = 0;
 public:
 	class Config {
 	public:
@@ -24,13 +26,14 @@ public:
 	GLint getTextureSample();
 	GLuint getTextureId();
 	GLint getGLType();
+	std::vector<GLfloat> toNormalBuffer();
 	void dispose();
-	Texture(std::vector<GLubyte> rgb, Program* p, Config cfg);
+	Texture(std::vector<GLubyte> rgba, Program* p, Config cfg);
 	#ifdef _WIN32
 		Texture(Program* p, std::string file, Config cfg);
 	#else
 		Texture(Program* p, AAsset* fileBuffer, Config cfg);
 	#endif
-	Texture(GLubyte* rgb, Program* p, Config cfg, GLuint width, GLuint height);
+	Texture(GLubyte* rgba, Program* p, Config cfg, GLuint width, GLuint height);
 	Texture() = delete;
 };
