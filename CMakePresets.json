@@ -2,7 +2,7 @@
 	"version": 8,
 	"configurePresets": [
 		{
-			"name": "Win32",
+			"name": "Win64",
 			"displayName": "GCC 16.2.0 mingw32",
 			"description": "Using compilers: C = c:\\MinGW\\bin\\gcc.exe, CXX = c:\\MinGW\\bin\\g++.exe",
 			"generator": "MinGW Makefiles",

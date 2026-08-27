@@ -13,7 +13,6 @@ Object3D::Object3D(Camera* camera, RenderUtils* rend, Texture* tex) {
 	renderUtils = rend;
 	texture = tex;
 	model.values = glm::translate(glm::mat4(1.0f), glm::vec3(position.getX(), position.getY(), position.getZ()));
-	model = Matrix4();
 	modelLocation = glGetUniformLocation(rend->getProgram()->getId(), "model");
 }
 Object3D::~Object3D() {
@@ -114,10 +113,10 @@ void Object3D::render(Program* currentProgram, bool isShadowPass) {
 	while ((err = glGetError()) != GL_NO_ERROR) {
 		std::cout << "OpenGL error occured: 0x" << std::hex << err << std::dec << std::endl;
 	}
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 void Object3D::dispose() {
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindVertexArray(0);
 	glDeleteVertexArrays(1, &b.VAO);
 	std::vector<GLuint> buffersToDelete;
 	buffersToDelete.push_back(b.VBO);

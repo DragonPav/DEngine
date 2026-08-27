@@ -661,7 +661,7 @@ std::unique_ptr<Object3D> ObjectCreator::createFromOBJ(std::ifstream* file, Vect
 						historyOfVertices.push_back(currentVertex);
 						if (currentVertex.vIdx >= 0 && currentVertex.vIdx < (int)raw_positions.size()) {
 							float x = raw_positions[currentVertex.vIdx].getX() + pos.getX();
-							float y = raw_positions[currentVertex.vIdx].getX() + pos.getY();
+							float y = raw_positions[currentVertex.vIdx].getY() + pos.getY();
 							float z = raw_positions[currentVertex.vIdx].getZ() + pos.getZ();
 							ret->vertexBuffer.push_back(x);
 							ret->vertexBuffer.push_back(y);

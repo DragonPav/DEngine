@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10.0)
 
-project(DEngine VERSION 1.3.2 LANGUAGES C CXX)
+project(DEngine VERSION 1.3.5 LANGUAGES C CXX)
 
 option(DENGINE_COMPILE_SAMPLES "Compile samples of DEngine" ON)
 option(BUILD_SHARED_LIBS "Compile shared libs" ON)
@@ -9,7 +9,7 @@ file(GLOB DENGINE_HEADERS "include/*.h")
 
 if(WIN32)
 	message(STATUS "Compiling for Windows")
-	add_library(DEngine ${DENGINE_SOURCES} ${DENGINE_HEADERS})
+	add_library(DEngine ${DENGINE_SOURCES} ${DENGINE_HEADERS} version.rc)
 	target_compile_definitions(DEngine PRIVATE GLEW_BUILD GLEW_STATIC)
 
 	target_include_directories(DEngine
@@ -48,6 +48,17 @@ if(${DENGINE_COMPILE_SAMPLES})
 	## Sound in 3D
 	add_executable(sound_in_3d samples/sound_in_3d.cpp)
 	target_link_libraries(sound_in_3d DEngine)
-
+	## Alpha demo
+	add_executable(alpha_demo samples/alpha_demo.cpp)
+	target_link_libraries(alpha_demo DEngine)
+	## .obj loading
+	add_executable(obj_loading samples/obj_loading.cpp)
+	target_link_libraries(obj_loading DEngine)
+	## Shadow
+	add_executable(shadow samples/shadow.cpp)
+	target_link_libraries(shadow DEngine)
+	## Gui sample
+	add_executable(gui_sample samples/gui_sample.cpp)
+	target_link_libraries(gui_sample DEngine)
 	file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/samples/res" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 endif()
