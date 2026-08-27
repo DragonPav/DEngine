@@ -8,6 +8,7 @@ void CameraControl::mouseButtonCallback(int button, int action) {
 	if (button == 0) {
 		if (action == Input::KEY_PRESSED) {
 			pressed = true;
+			firstPress = true;
 		} else if (action == Input::KEY_RELEASED) {
 			pressed = false;
 		}
@@ -15,14 +16,17 @@ void CameraControl::mouseButtonCallback(int button, int action) {
 }
 void CameraControl::mousePosCallback(double xpos, double ypos) {
 	if (!pressed || camera == nullptr) return;
+	if (firstPress) {
+		lastX = xpos;
+		lastY = ypos;
+		firstPress = false;
+	}
 	double xoffset = xpos - lastX;
 	#ifdef _WIN32
 		double yoffset = lastY - ypos;
 	#else
 		double yoffset = ypos - lastY;
 	#endif
-	lastX = xpos;
-	lastY = ypos;
 	xoffset *= sensitivity;
 	yoffset *= sensitivity;
 	yaw += (float)xoffset;
