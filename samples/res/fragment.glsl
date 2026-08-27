@@ -85,15 +85,19 @@ void main() {
 	vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(cameraPos - FragPos);
     vec3 lightDir = normalize(-dirLight.direction);
+	vec4 texColorRGBA = texture(textureUnit, TexCoord);
+	vec3 texColor = texColorRGBA.rgb;
+    float alpha = texColorRGBA.a;
 	
-	vec3 texColor = vec3(texture(textureUnit, TexCoord));
-	
+    if (alpha < 0.01) {
+        discard;
+    }
+
     float shadow = calcShadowFactor(FragPosLightSpace, norm, lightDir);
     vec3 result = calcDirLight(dirLight, norm, viewDir, shadow, texColor);
     
 	for (int i = 0; i < MAX_POINT_LIGHTS; i++) {
         result += calcPointLight(pointLights[i], norm, FragPos, viewDir, texColor);
-    
 	}
-    color = vec4(result, 1.0f);
+    color = vec4(result, alpha);
 }
