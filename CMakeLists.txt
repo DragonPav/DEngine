@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10.0)
 
-project(DEngine VERSION 1.3.5 LANGUAGES C CXX)
+project(DEngine VERSION 1.3.6 LANGUAGES C CXX)
 
 option(DENGINE_COMPILE_SAMPLES "Compile samples of DEngine" ON)
 option(BUILD_SHARED_LIBS "Compile shared libs" ON)
@@ -15,11 +15,11 @@ if(WIN32)
 	target_include_directories(DEngine
 	PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include"
 	PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/glm"
-	PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/glew-2.3.1/include"
-	PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/glfw-3.4.bin.WIN64/include")
+	PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/third_party/glew-2.3.1/include"
+	PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/third_party/glfw-3.4.bin.WIN64/include")
 
-	target_link_libraries(DEngine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/glew-2.3.1/lib/libglew32d.a"
-	"${CMAKE_CURRENT_SOURCE_DIR}/glfw-3.4.bin.WIN64/lib/libglfw3.a" opengl32 gdi32 ws2_32)
+	target_link_libraries(DEngine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/third_party/glew-2.3.1/lib/libglew32d.a"
+	"${CMAKE_CURRENT_SOURCE_DIR}/third_party/glfw-3.4.bin.WIN64/lib/libglfw3.a" opengl32 gdi32 ws2_32)
 elseif(ANDROID)
 	message(STATUS "Compiling for Android")
 	if(${DENGINE_COMPILE_SAMPLES})
@@ -35,7 +35,7 @@ elseif(ANDROID)
 	find_library(gles3-lib GLESv3 REQUIRED)
 	find_library(log-lib log REQUIRED)
 	find_library(android-lib android REQUIRED)
-	target_link_libraries(DEngine ${gles3-lib} ${log-lib} ${android-lib})
+	target_link_libraries(DEngine PUBLIC ${gles3-lib} ${log-lib} ${android-lib})
 else()
 	message(FATAL_ERROR "Platform not supported yet.")
 endif()
