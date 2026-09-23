@@ -1,7 +1,9 @@
 #include "Lighting.h"
 #include <string>
 #include <vector>
+#include "Logger.h"
 GLint maxTexUnits = 16;
+const int MAX_POINT_LIGHTS_COUNT = 64;
 DirLight::DirLight(Program* p) {
 	this->p = p;
 	ambient = Vector3(0.1f, 0.1f, 0.1f);
@@ -51,15 +53,17 @@ void DirLight::initShadows() {
 	glGenFramebuffers(1, &depthFBO);
 	glGenTextures(1, &depthMap);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_SIZE, SHADOW_SIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, SHADOW_SIZE, SHADOW_SIZE, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT,nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glBindFramebuffer(GL_FRAMEBUFFER, depthFBO);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (status != GL_FRAMEBUFFER_COMPLETE) {
+        Logger::print(Logger::Error, ("Shadow FBO incomplete: 0x" + std::to_string(status)).c_str());
+    }
 	#ifdef _WIN32
 		glDrawBuffer(GL_NONE);
 	#else
@@ -100,7 +104,7 @@ PointLight::PointLight(Program* p, GLint number) {
 	specular = Vector3(1, 1, 1);
 	std::string specularS = "pointLights[" + std::to_string(number) + "].specular";
 	specular.setUniform(glGetUniformLocation(p->getId(), specularS.c_str()));
-	position = Vector3(0, 2, 0);
+	position = Vector3(2048, 2048, 2048);
 	std::string positionS = "pointLights[" + std::to_string(number) + "].position";
 	position.setUniform(glGetUniformLocation(p->getId(), positionS.c_str()));
 	std::string constantS = "pointLights[" + std::to_string(number) + "].constant";
@@ -178,11 +182,6 @@ Lighting::~Lighting() {
 }
 void Lighting::dispose() {
 	dirLight.dispose();
-	for (PointLight* pointLight : pointLights) {
-		if (pointLight != nullptr) {
-			delete pointLight;
-		}
-	}
 	pointLights.clear();
 }
 void Lighting::beginShadows(Program* shProg) {
@@ -215,12 +214,23 @@ void Lighting::endShadows(int width, int height, Program* mainProg) {
 Lighting::Lighting(Vector3 camPos, Program* p) : dirLight(p) {
 	cameraPos = Vector3(camPos.getX(), camPos.getY(), camPos.getZ());
 	cameraPos.setUniform(glGetUniformLocation(p->getId(), "cameraPos"));
-	pointLights.push_back(new PointLight(p, 0));
+	activeLightsLoc = glGetUniformLocation(p->getId(), "activePointLightsCount");
 }
 void Lighting::bind() {
 	cameraPos.uniform();
 	dirLight.bind();
-	for (PointLight* pointLight : pointLights) {
-		pointLight->bind();
+	if (activeLightsLoc != -1) {
+		glUniform1i(activeLightsLoc, static_cast<GLint>(pointLights.size()));
 	}
+	for (PointLight pointLight : pointLights) {
+		pointLight.bind();
+	}
+}
+void Lighting::addPointLight(Program* program, Vector3 position) {
+	if (pointLights.size() >= MAX_POINT_LIGHTS_COUNT) {
+		std::cout << "Point lights count limit reached" << std::endl;
+		return;
+	}
+	int index = pointLights.size();
+	pointLights.push_back(PointLight(program, index));
 }

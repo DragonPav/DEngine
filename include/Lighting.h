@@ -78,7 +78,8 @@ private:
 public:
 	Vector3 cameraPos;
 	DirLight dirLight;
-	std::vector<PointLight*> pointLights;
+	std::vector<PointLight> pointLights;
+	GLint activeLightsLoc = -1;
 	void bind();
 	Lighting() = delete;
 	Lighting(Vector3 camPos, Program* p);
@@ -86,4 +87,5 @@ public:
 	void dispose();
 	void beginShadows(Program* shProg);
 	void endShadows(int width, int height, Program* mainProg);
+	void addPointLight(Program* program, Vector3 position);
 };
