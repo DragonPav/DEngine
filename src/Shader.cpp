@@ -1,28 +1,70 @@
 #include "Shader.h"
-Shader::Shader(std::ifstream *file, Type type) {
-	if (!file->is_open()) {
-		std::cerr << "Failed to open a file! Shader type: " << type <<  std::endl;
-		throw std::runtime_error("failed to open");
+#include "Logger.h"
+#ifdef _WIN32
+	Shader::Shader(std::ifstream *file, Type type) {
+		if (!file->is_open()) {
+			std::string str = "Failed to open a file! Shader type: " + type;
+			Logger::print(Logger::Error, str);
+			return;
+		}
+		std::string source;
+		std::string line;
+		while (std::getline(*file, line)) {
+			source += line + "\r\n";
+		}
+		file->close();
+		std::string name;
+		switch (type) {
+		case Vertex:
+			shaderId = glCreateShader(GL_VERTEX_SHADER);
+			name = "Vertex";
+			break;
+		case Fragment:
+			shaderId = glCreateShader(GL_FRAGMENT_SHADER);
+			name = "Fragment";
+			break;
+		}
+		this->type = type;
+		std::string str = "Shader with type: " + name + ", id: " + std::to_string(shaderId) + " created.";
+		Logger::print(Logger::Info, str);
+		const GLchar* buf = source.c_str();
+		glShaderSource(shaderId, 1, &buf, NULL);
 	}
-	std::string source;
-	std::string line;
-	while (std::getline(*file, line)) {
-		source += line + "\r\n";
+#else
+	Shader::Shader(AAsset *file, Type type) {
+		if (file == nullptr) {
+			std::string str = "Failed to open a file! in Shader";
+			Logger::print(Logger::Error, str);
+			return;
+		}
+		const char* buffer = (const char*) AAsset_getBuffer(file);
+		off_t length = AAsset_getLength(file);
+		std::string content(buffer, length);
+		std::istringstream fileStream(content);
+		AAsset_close(file);
+		std::string source;
+		std::string line;
+		while (std::getline(fileStream, line)) {
+			source += line + "\n";
+		}
+		std::string name;
+		switch (type) {
+		case Vertex:
+			shaderId = glCreateShader(GL_VERTEX_SHADER);
+			name = "Vertex";
+			break;
+		case Fragment:
+			shaderId = glCreateShader(GL_FRAGMENT_SHADER);
+			name = "Fragment";
+			break;
+		}
+		std::string str = "Shader with type: " + name + ", id: " + std::to_string(shaderId) + " created.";
+		Logger::print(Logger::Info, str);
+		this->type = type;
+		const GLchar* buf = source.c_str();
+		glShaderSource(shaderId, 1, &buf, NULL);
 	}
-	file->close();
-	switch (type) {
-	case Vertex:
-		shaderId = glCreateShader(GL_VERTEX_SHADER);
-		break;
-	case Fragment:
-		shaderId = glCreateShader(GL_FRAGMENT_SHADER);
-		break;
-	}
-	this->type = type;
-	std::cout << "Shader with type: " << type << " id: " << shaderId << " created." << std::endl;
-	const GLchar* buf = source.c_str();
-	glShaderSource(shaderId, 1, &buf, NULL);
-}
+#endif
 Shader::~Shader() {
 	deleteShader();
 }
@@ -31,15 +73,17 @@ bool Shader::compile() {
 	GLint status;
 	glGetShaderiv(shaderId, GL_COMPILE_STATUS, &status);
 	if (status == GL_TRUE) {
-		std::cout << "Shader with id: " << shaderId << " sucessfully compiled" << std::endl;
+		std::string msg = "Shader with id: " + std::to_string(shaderId) + " sucessfully compiled";
+		Logger::print(Logger::Info, msg);
 		return true;
 	}
 	else {
 		GLchar infoLog[512];
 		glGetShaderInfoLog(shaderId, 512, NULL, infoLog);
-		std::cerr << "Failed to compile shader with id: " << shaderId << " Error log:" << std::endl;
-		std::cerr << "-------------------------" << std::endl;
-		std::cerr << infoLog << std::endl;
+		std::string str = "Failed to compile shader with id: " + std::to_string(shaderId) + " Error log:";
+		Logger::print(Logger::Error, str);
+		Logger::print(Logger::Error, "-------------------------");
+		Logger::print(Logger::Error, infoLog);
 		return false;
 	}
 }
