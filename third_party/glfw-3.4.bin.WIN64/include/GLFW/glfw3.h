@@ -159,7 +159,7 @@ extern "C" {
 
 #elif defined(GLFW_INCLUDE_ES3)
 
- #include <GLES3/gl3.h>
+ #include <GLES3/gl32.h>
  #if defined(GLFW_INCLUDE_GLEXT)
   #include <GLES2/gl2ext.h>
  #endif
