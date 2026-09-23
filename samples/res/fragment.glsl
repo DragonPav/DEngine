@@ -1,6 +1,6 @@
 #version 330 core
 //Change this number if you want use other count of point lights.
-#define MAX_POINT_LIGHTS 1
+#define MAX_POINT_LIGHTS 64
 precision mediump float;
 
 out vec4 color;
@@ -33,10 +33,13 @@ struct PointLight {
 uniform DirectionLight dirLight;
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
 
+uniform int activePointLightsCount;
+
 float calcShadowFactor(vec4 fragPosLightSpace, vec3 normal, vec3 lightDir) {
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
-    if (projCoords.z > 1.0) return 0.0;
+    if (projCoords.z > 1.0 || projCoords.x < 0.0 || projCoords.x > 1.0 || projCoords.y < 0.0 || projCoords.y > 1.0) return 0.0;
+    if (dot(normal, lightDir) <= 0.0) return 1.0;
     float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
     float shadow = 0.0;
     vec2 texelSize = 1.0 / vec2(textureSize(shadowMap, 0));
@@ -96,7 +99,8 @@ void main() {
     float shadow = calcShadowFactor(FragPosLightSpace, norm, lightDir);
     vec3 result = calcDirLight(dirLight, norm, viewDir, shadow, texColor);
     
-	for (int i = 0; i < MAX_POINT_LIGHTS; i++) {
+    int lightsToCompute = min(activePointLightsCount, MAX_POINT_LIGHTS);
+	for (int i = 0; i < lightsToCompute; i++) {
         result += calcPointLight(pointLights[i], norm, FragPos, viewDir, texColor);
 	}
     color = vec4(result, alpha);
