@@ -9,7 +9,8 @@ Vector3::Vector3(GLint loc) {
 }
 void Vector3::uniform() {
 	if (uniformL == -1) {
-		throw std::runtime_error("uniform is -1");
+		std::cerr << "uniform is -1" << std::endl;
+		return;
 	}
 	glUniform3f(uniformL, x, y, z);
 }

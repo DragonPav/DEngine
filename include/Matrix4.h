@@ -7,7 +7,7 @@
 #ifdef _WIN32
 	#include <GL/glew.h>
 #else
-	#include <GLES3/gl3.h>
+	#include <GLES3/gl32.h>
 #endif
 class Object3D;
 class Matrix4 {
