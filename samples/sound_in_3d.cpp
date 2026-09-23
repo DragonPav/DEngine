@@ -18,7 +18,7 @@ int main() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-	window = glfwCreateWindow(1080, 720, "textureCube", nullptr, nullptr);
+	window = glfwCreateWindow(1080, 720, "sound_in_3d", nullptr, nullptr);
 	if (window == nullptr) {
 		std::cout << "Failed to create window" << std::endl;
 		glfwTerminate();
@@ -53,10 +53,6 @@ int main() {
 	dir.setX(1.0f);
 	dir.setY(-2.0f);
 	dir.setZ(-1.0f);
-	Vector3& pos = li.pointLights[0]->getPosition();
-	pos.setX(2048);
-	pos.setY(2048);
-	pos.setZ(2048);
 	//--CAMERA--
 	RenderUtils re(&program, &li, window);
 	int width, height;
