@@ -4,6 +4,7 @@
 	#include <GLFW/glfw3.h>
 #else
 	#include <android/input.h>
+	#include <android/input.h>
 #endif
 #include <unordered_map>
 #include <string>
@@ -37,7 +38,7 @@ public:
 	#ifdef _WIN32
 		Input(GLFWwindow* win);
 	#else
-		bool handleAndroidInput(AInputEvent* event);
+		bool handleAndroidInput(const AInputEvent* event);
 		Input(void* win);
 	#endif
 	~Input();

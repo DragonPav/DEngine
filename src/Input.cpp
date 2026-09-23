@@ -17,7 +17,7 @@ static Input* input;
 		}
 	}
 #else
-	bool Input::handleAndroidInput(AInputEvent* event) {
+	bool Input::handleAndroidInput(const AInputEvent* event) {
 		int32_t type = AInputEvent_getType(event);
 		if (type == AINPUT_EVENT_TYPE_MOTION) {
 			int32_t action = AMotionEvent_getAction(event);

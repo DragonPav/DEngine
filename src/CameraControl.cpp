@@ -1,8 +1,13 @@
 #include "CameraControl.h"
 CameraControl* cc = nullptr;
 CameraControl::CameraControl(Input* input) {
-	input->addMouseButtonCallback([](int button, int action) { cc->mouseButtonCallback(button, action); });
-	input->addMousePosCallback([](double xpos, double ypos) { cc->mousePosCallback(xpos, ypos); });
+	in = input;
+	buttonCbId = input->addMouseButtonCallback([this](int button, int action) { cc->mouseButtonCallback(button, action); });
+	moveCbId = input->addMousePosCallback([this](double xpos, double ypos) { cc->mousePosCallback(xpos, ypos); });
+}
+CameraControl::~CameraControl() {
+	in->removeMouseButtonCallback(buttonCbId);
+	in->removeMousePosCallback(moveCbId);
 }
 void CameraControl::mouseButtonCallback(int button, int action) {
 	if (button == 0) {
@@ -43,8 +48,8 @@ void CameraControl::mousePosCallback(double xpos, double ypos) {
 	camera->setCameraPos(newPos);
 }
 void CameraControl::setup(Camera* came) {
+    cc = this;
 	camera = came;
-	cc = this;
 	float dx = camera->getCameraPos().getX() - camera->getLookPos().getX();
 	float dy = camera->getCameraPos().getY() - camera->getLookPos().getY();
 	float dz = camera->getCameraPos().getZ() - camera->getLookPos().getZ();
