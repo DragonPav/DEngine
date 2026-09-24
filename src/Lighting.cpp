@@ -64,11 +64,11 @@ void DirLight::initShadows() {
     if (status != GL_FRAMEBUFFER_COMPLETE) {
         Logger::print(Logger::Error, ("Shadow FBO incomplete: 0x" + std::to_string(status)).c_str());
     }
-	#ifdef _WIN32
-		glDrawBuffer(GL_NONE);
-	#else
+	#ifdef __ANDROID__
 		GLenum noneBuffer[] = {GL_NONE};
 		glDrawBuffers(1, noneBuffer);
+	#else
+		glDrawBuffer(GL_NONE);
 	#endif
 	glReadBuffer(GL_NONE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);

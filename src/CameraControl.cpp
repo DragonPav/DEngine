@@ -27,10 +27,10 @@ void CameraControl::mousePosCallback(double xpos, double ypos) {
 		firstPress = false;
 	}
 	double xoffset = xpos - lastX;
-	#ifdef _WIN32
-		double yoffset = lastY - ypos;
-	#else
+	#ifdef __ANDROID__
 		double yoffset = ypos - lastY;
+	#else
+		double yoffset = lastY - ypos;
 	#endif
 	xoffset *= sensitivity;
 	yoffset *= sensitivity;

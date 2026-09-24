@@ -1,9 +1,9 @@
 ﻿#pragma once
 #include <iostream>
-#ifdef _WIN32
-	#include <GL/glew.h>
-#else
+#ifdef __ANDROID__
 	#include <GLES3/gl32.h>
+#else
+	#include <GL/glew.h>
 #endif
 class Vector4 {
 public:

@@ -2,10 +2,10 @@
 #include "Camera.h"
 #include "RenderUtils.h"
 #include "Input.h"
-#ifdef _WIN32
-	#include <GLFW/glfw3.h>
-#else
+#ifdef __ANDROID__
 	#include <android/input.h>
+#else
+	#include <GLFW/glfw3.h>
 #endif
 class Camera;
 class RenderUtils;

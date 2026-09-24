@@ -33,36 +33,7 @@ Texture::Texture(std::vector<GLubyte> rgba, Program* p, Config cfg) {
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
-#ifdef _WIN32
-	Texture::Texture(Program* p, std::string file, Config cfg) {
-		texSampleNum = glGetUniformLocation(p->getId(), "textureUnit");
-		int width, height, bpp;
-		unsigned char* dat = stbi_load(file.c_str(), &width, &height, &bpp, 4);
-		size_t size = static_cast<size_t>(width) * height * 4;
-		colorBuffer.insert(colorBuffer.begin(), dat, dat + size);
-		if (stbi_failure_reason()) {
-			std::cerr << "STBI error: " << stbi_failure_reason() << std::endl;
-			return;
-		}
-		GLuint tmpBuf[1];
-		glGenTextures(1, tmpBuf);
-		textureId = tmpBuf[0];
-		glBindTexture(GL_TEXTURE_2D, textureId);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, cfg.textureWrapS);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, cfg.textureWrapT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, cfg.textureMinFilter);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, cfg.textureMagFilter);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, colorBuffer.data());
-		if (glGetError() != GL_NO_ERROR) {
-			std::cerr << "Texture setup failure: gl error: " << glGetError() << std::endl;
-		}
-		if (cfg.useMipmap) {
-			glGenerateMipmap(GL_TEXTURE_2D);
-		}
-		glBindTexture(GL_TEXTURE_2D, 0);
-		stbi_image_free(dat);
-	}
-#else
+#ifdef __ANDROID__
 	Texture::Texture(Program* p, AAsset* fileBuffer, Config cfg) {
 		texSampleNum = glGetUniformLocation(p->getId(), "textureUnit");
 		size_t size = AAsset_getLength(fileBuffer);
@@ -90,6 +61,35 @@ Texture::Texture(std::vector<GLubyte> rgba, Program* p, Config cfg) {
 		}
 		glBindTexture(GL_TEXTURE_2D, 0);
 		AAsset_close(fileBuffer);
+		stbi_image_free(dat);
+	}
+#else
+	Texture::Texture(Program* p, std::string file, Config cfg) {
+		texSampleNum = glGetUniformLocation(p->getId(), "textureUnit");
+		int width, height, bpp;
+		unsigned char* dat = stbi_load(file.c_str(), &width, &height, &bpp, 4);
+		size_t size = static_cast<size_t>(width) * height * 4;
+		colorBuffer.insert(colorBuffer.begin(), dat, dat + size);
+		if (stbi_failure_reason()) {
+			std::cerr << "STBI error: " << stbi_failure_reason() << std::endl;
+			return;
+		}
+		GLuint tmpBuf[1];
+		glGenTextures(1, tmpBuf);
+		textureId = tmpBuf[0];
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, cfg.textureWrapS);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, cfg.textureWrapT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, cfg.textureMinFilter);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, cfg.textureMagFilter);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, colorBuffer.data());
+		if (glGetError() != GL_NO_ERROR) {
+			std::cerr << "Texture setup failure: gl error: " << glGetError() << std::endl;
+		}
+		if (cfg.useMipmap) {
+			glGenerateMipmap(GL_TEXTURE_2D);
+		}
+		glBindTexture(GL_TEXTURE_2D, 0);
 		stbi_image_free(dat);
 	}
 #endif

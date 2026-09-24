@@ -62,18 +62,16 @@ void Camera::update() {
 void Camera::setCameraControl(CameraControl* cc) {
 	cc->setup(this);
 }
-#ifdef _WIN32
-	Vector3 Camera::getMouseWorldRay(float mouseX, float mouseY) {
-		int width, height;
-		glfwGetFramebufferSize(rendUtils->getWindow(), &width, &height);
+#ifdef __ANDROID__
+	Vector3 Camera::getMouseWorldRay(float mouseX, float mouseY, float width, float height) {
 		glm::vec4 viewport(0, 0, (float)width, (float)height);
 		glm::vec3 nearPoint = glm::unProject(glm::vec3(mouseX, mouseY, 0.0f), view.values, projection.values, viewport);
 		glm::vec3 farPoint = glm::unProject(glm::vec3(mouseX, mouseY, 1.0f), view.values, projection.values, viewport);
 		glm::vec3 vec = glm::normalize(farPoint - nearPoint);
 		return Vector3(vec.x, vec.y, vec.z);
 	}
-	bool Camera::isMouseOverBoundingBox(float mouseX, float mouseY, BoundingBox* bounds) {
-		Vector3 rayDir = getMouseWorldRay(mouseX, mouseY);
+	bool Camera::isMouseOverBoundingBox(float mouseX, float mouseY, BoundingBox* bounds, float scrW, float scrH) {
+		Vector3 rayDir = getMouseWorldRay(mouseX, mouseY, scrW, scrH);
 		glm::vec3 origin(camPos.getX(), camPos.getY(), camPos.getZ());
 		glm::vec3 invDir = 1.0f / glm::vec3(rayDir.getX(), rayDir.getY(), rayDir.getZ());
 		glm::vec3 t1 = (glm::vec3(bounds->getMin().getX(), bounds->getMin().getY(), bounds->getMin().getZ()) - origin) * invDir;
@@ -85,15 +83,17 @@ void Camera::setCameraControl(CameraControl* cc) {
 		return tNear <= tFar && tFar >= 0;
 	}
 #else
-	Vector3 Camera::getMouseWorldRay(float mouseX, float mouseY, float width, float height) {
+	Vector3 Camera::getMouseWorldRay(float mouseX, float mouseY) {
+		int width, height;
+		glfwGetFramebufferSize(rendUtils->getWindow(), &width, &height);
 		glm::vec4 viewport(0, 0, (float)width, (float)height);
 		glm::vec3 nearPoint = glm::unProject(glm::vec3(mouseX, mouseY, 0.0f), view.values, projection.values, viewport);
 		glm::vec3 farPoint = glm::unProject(glm::vec3(mouseX, mouseY, 1.0f), view.values, projection.values, viewport);
 		glm::vec3 vec = glm::normalize(farPoint - nearPoint);
 		return Vector3(vec.x, vec.y, vec.z);
 	}
-	bool Camera::isMouseOverBoundingBox(float mouseX, float mouseY, BoundingBox* bounds, float scrW, float scrH) {
-		Vector3 rayDir = getMouseWorldRay(mouseX, mouseY, scrW, scrH);
+	bool Camera::isMouseOverBoundingBox(float mouseX, float mouseY, BoundingBox* bounds) {
+		Vector3 rayDir = getMouseWorldRay(mouseX, mouseY);
 		glm::vec3 origin(camPos.getX(), camPos.getY(), camPos.getZ());
 		glm::vec3 invDir = 1.0f / glm::vec3(rayDir.getX(), rayDir.getY(), rayDir.getZ());
 		glm::vec3 t1 = (glm::vec3(bounds->getMin().getX(), bounds->getMin().getY(), bounds->getMin().getZ()) - origin) * invDir;

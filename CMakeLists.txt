@@ -7,7 +7,7 @@ option(BUILD_SHARED_LIBS "Compile shared libs" ON)
 file(GLOB DENGINE_SOURCES "src/*.cpp" "src/miniaudio.c")
 file(GLOB DENGINE_HEADERS "include/*.h")
 
-if(WIN32)
+if(WIN32 OR LINUX)
 	message(STATUS "Compiling for Windows")
 	add_library(DEngine ${DENGINE_SOURCES} ${DENGINE_HEADERS} version.rc)
 	target_compile_definitions(DEngine PRIVATE GLEW_BUILD GLEW_STATIC)

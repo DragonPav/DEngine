@@ -1,5 +1,15 @@
 #include "RenderUtils.h"
-#ifdef _WIN32
+#ifdef __ANDROID__
+	RenderUtils::RenderUtils(Program* program, Lighting* li, void* window) {
+		p = program;
+		lighting = li;
+		this->window = window;
+		//Some logging
+		std::cout << "Initializing RenderUtils..." << std::endl;
+		std::cout << "------------------------" << std::endl;
+		std::cout << "GPU: " << glGetString(GL_RENDERER) << std::endl;
+	}
+#else
 	RenderUtils::RenderUtils(Program* program, Lighting* li, GLFWwindow* window) {
 		p = program;
 		lighting = li;
@@ -12,16 +22,6 @@
 		glfwGetFramebufferSize(window, &width, &height);
 		std::cout << "Width: " << width << std::endl;
 		std::cout << "Height: " << height << std::endl;
-	}
-#else
-	RenderUtils::RenderUtils(Program* program, Lighting* li, void* window) {
-		p = program;
-		lighting = li;
-		this->window = window;
-		//Some logging
-		std::cout << "Initializing RenderUtils..." << std::endl;
-		std::cout << "------------------------" << std::endl;
-		std::cout << "GPU: " << glGetString(GL_RENDERER) << std::endl;
 	}
 #endif
 ObjectBuffer RenderUtils::createStaticVAO(GLfloat* vertices, GLuint* indices, GLfloat* tex, GLfloat* normal, GLuint vertexBufSize, GLuint indexBufSize, GLuint texBufSize, GLuint normalBufSize) {
@@ -57,7 +57,7 @@ ObjectBuffer RenderUtils::createStaticVAO(GLfloat* vertices, GLuint* indices, GL
 	glBindVertexArray(0);
 	return b;
 }
-#ifdef _WIN32
+#ifndef __ANDROID__
 	void RenderUtils::setWindow(GLFWwindow* win) {
 		if (window == nullptr) {
 			throw std::runtime_error("RenderUtils::setWindow win is null");

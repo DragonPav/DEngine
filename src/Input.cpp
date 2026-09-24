@@ -1,22 +1,6 @@
 #include "Input.h"
 static Input* input;
-#ifdef _WIN32
-	void Input::mouse_button(GLFWwindow* win, int button, int action, int mods) {
-		for (std::pair<int, std::function<void(int, int)>> pair : mouseButtonCallbacks) {
-			pair.second(button, action);
-		}
-	}
-	void Input::mouse_move(GLFWwindow* win, double xpos, double ypos) {
-		for (std::pair<int, std::function<void(double, double)>> pair : mousePosCallbacks) {
-			pair.second(xpos, ypos);
-		}
-	}
-	void Input::key_callback(GLFWwindow* win, int key, int action, int mods) {
-		for (std::pair<int, std::function<void(int, int)>> pair : keyboardCallbacks) {
-			pair.second(key, action);
-		}
-	}
-#else
+#ifdef __ANDROID__
 	bool Input::handleAndroidInput(const AInputEvent* event) {
 		int32_t type = AInputEvent_getType(event);
 		if (type == AINPUT_EVENT_TYPE_MOTION) {
@@ -55,6 +39,22 @@ static Input* input;
 		}
 		return false;
 	}
+#else
+	void Input::mouse_button(GLFWwindow* win, int button, int action, int mods) {
+		for (std::pair<int, std::function<void(int, int)>> pair : mouseButtonCallbacks) {
+			pair.second(button, action);
+		}
+	}
+	void Input::mouse_move(GLFWwindow* win, double xpos, double ypos) {
+		for (std::pair<int, std::function<void(double, double)>> pair : mousePosCallbacks) {
+			pair.second(xpos, ypos);
+		}
+	}
+	void Input::key_callback(GLFWwindow* win, int key, int action, int mods) {
+		for (std::pair<int, std::function<void(int, int)>> pair : keyboardCallbacks) {
+			pair.second(key, action);
+		}
+	}
 #endif
 int Input::addMouseButtonCallback(std::function<void(int, int)> cb) {
 	int id = nextMouseButtonId++;
@@ -80,7 +80,16 @@ int Input::addKeyboardCallback(std::function<void(int, int)> cb) {
 void Input::removeKeyboardCallback(int id) {
 	keyboardCallbacks.erase(id);
 }
-#ifdef _WIN32
+#ifdef __ANDROID__
+	Input::Input(void* win) {
+		input = this;
+	}
+	Input::~Input() {
+		mouseButtonCallbacks.clear();
+		mousePosCallbacks.clear();
+		keyboardCallbacks.clear();
+	}
+#else
 	Input::Input(GLFWwindow* win) {
 		window = win;
 		input = this;
@@ -95,14 +104,5 @@ void Input::removeKeyboardCallback(int id) {
 		glfwSetMouseButtonCallback(window, nullptr);
 		glfwSetCursorPosCallback(window, nullptr);
 		glfwSetKeyCallback(window, nullptr);
-	}
-#else
-	Input::Input(void* win) {
-		input = this;
-	}
-	Input::~Input() {
-		mouseButtonCallbacks.clear();
-		mousePosCallbacks.clear();
-		keyboardCallbacks.clear();
 	}
 #endif

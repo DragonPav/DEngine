@@ -29,10 +29,10 @@ public:
 	std::vector<GLfloat> toNormalBuffer();
 	void dispose();
 	Texture(std::vector<GLubyte> rgba, Program* p, Config cfg);
-	#ifdef _WIN32
-		Texture(Program* p, std::string file, Config cfg);
-	#else
+	#ifdef __ANDROID__
 		Texture(Program* p, AAsset* fileBuffer, Config cfg);
+	#else
+		Texture(Program* p, std::string file, Config cfg);
 	#endif
 	Texture(GLubyte* rgba, Program* p, Config cfg, GLuint width, GLuint height);
 	Texture() = delete;

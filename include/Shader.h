@@ -2,12 +2,12 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#ifdef _WIN32
-	#include <GL/glew.h>
-#else
+#ifdef __ANDROID__
 	#include <sstream>
 	#include <GLES3/gl32.h>
 	#include <android/asset_manager.h>
+#else
+	#include <GL/glew.h>
 #endif
 class Shader {
 public:
@@ -15,10 +15,10 @@ public:
 		Vertex,
 		Fragment
 	};
-	#ifdef _WIN32
-		Shader(std::ifstream *file, Type type);
-	#else
+	#ifdef __ANDROID__
 		Shader(AAsset *file, Type type);
+	#else
+		Shader(std::ifstream *file, Type type);
 	#endif
 	Shader() = delete;
 	~Shader();

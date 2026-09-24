@@ -1,36 +1,6 @@
 #include "Shader.h"
 #include "Logger.h"
-#ifdef _WIN32
-	Shader::Shader(std::ifstream *file, Type type) {
-		if (!file->is_open()) {
-			std::string str = "Failed to open a file! Shader type: " + type;
-			Logger::print(Logger::Error, str);
-			return;
-		}
-		std::string source;
-		std::string line;
-		while (std::getline(*file, line)) {
-			source += line + "\r\n";
-		}
-		file->close();
-		std::string name;
-		switch (type) {
-		case Vertex:
-			shaderId = glCreateShader(GL_VERTEX_SHADER);
-			name = "Vertex";
-			break;
-		case Fragment:
-			shaderId = glCreateShader(GL_FRAGMENT_SHADER);
-			name = "Fragment";
-			break;
-		}
-		this->type = type;
-		std::string str = "Shader with type: " + name + ", id: " + std::to_string(shaderId) + " created.";
-		Logger::print(Logger::Info, str);
-		const GLchar* buf = source.c_str();
-		glShaderSource(shaderId, 1, &buf, NULL);
-	}
-#else
+#ifdef __ANDROID__
 	Shader::Shader(AAsset *file, Type type) {
 		if (file == nullptr) {
 			std::string str = "Failed to open a file! in Shader";
@@ -61,6 +31,36 @@
 		std::string str = "Shader with type: " + name + ", id: " + std::to_string(shaderId) + " created.";
 		Logger::print(Logger::Info, str);
 		this->type = type;
+		const GLchar* buf = source.c_str();
+		glShaderSource(shaderId, 1, &buf, NULL);
+	}
+#else
+	Shader::Shader(std::ifstream *file, Type type) {
+		if (!file->is_open()) {
+			std::string str = "Failed to open a file! Shader type: " + type;
+			Logger::print(Logger::Error, str);
+			return;
+		}
+		std::string source;
+		std::string line;
+		while (std::getline(*file, line)) {
+			source += line + "\r\n";
+		}
+		file->close();
+		std::string name;
+		switch (type) {
+		case Vertex:
+			shaderId = glCreateShader(GL_VERTEX_SHADER);
+			name = "Vertex";
+			break;
+		case Fragment:
+			shaderId = glCreateShader(GL_FRAGMENT_SHADER);
+			name = "Fragment";
+			break;
+		}
+		this->type = type;
+		std::string str = "Shader with type: " + name + ", id: " + std::to_string(shaderId) + " created.";
+		Logger::print(Logger::Info, str);
 		const GLchar* buf = source.c_str();
 		glShaderSource(shaderId, 1, &buf, NULL);
 	}
