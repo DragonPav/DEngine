@@ -15,7 +15,7 @@ private:
 	Lighting* lighting = nullptr;
 	Program* p = nullptr;
 public:
-	ObjectBuffer createStaticVAO(GLfloat* vertices, GLuint* indices, GLfloat* tex, GLfloat* normal, GLuint vertexBufSize, GLuint indexBufSize, GLuint texBufSize, GLuint normalBufferSize);
+	ObjectBuffer createStaticVAO(GLfloat* vertices, GLuint* indices, GLfloat* tex, GLfloat* normal, GLfloat* tangent, GLuint vertexBufSize, GLuint indexBufSize, GLuint texBufSize, GLuint normalBufferSize, GLuint tangentBufferSize);
 	#ifdef __ANDROID__
 		void setWindow(void* win) {};
 	#else

@@ -18,7 +18,6 @@ std::unique_ptr<Object3D> ObjectCreator::createCustom(std::vector<GLfloat> verts
 	ret->indexBuffer = indxs;
 	ret->texBuffer = texCoords;
 	ret->normalBuffer = normals;
-	ret->setup();
 	return ret;
 }
 std::unique_ptr<Object3D> ObjectCreator::createBox(Vector3 pos, Vector3 size, Camera* camera, Texture* texture) {
@@ -166,7 +165,6 @@ std::unique_ptr<Object3D> ObjectCreator::createBox(Vector3 pos, Vector3 size, Ca
 			ret->normalBuffer.push_back(normals[i]);
 		}
 	}
-	ret->setup();
 	return ret;
 }
 std::unique_ptr<Object3D> ObjectCreator::createQuad(Vector3 pos, Vector2 size, Camera* camera, Texture* tex) {
@@ -219,7 +217,6 @@ std::unique_ptr<Object3D> ObjectCreator::createQuad(Vector3 pos, Vector2 size, C
 			ret->normalBuffer.push_back(normals[i]);
 		}
 	}
-	ret->setup();
 	return ret;
 }
 std::unique_ptr<Object3D> ObjectCreator::createSurface(Vector3 pos, Vector2 size, Camera* camera, Texture* tex) {
@@ -272,7 +269,6 @@ std::unique_ptr<Object3D> ObjectCreator::createSurface(Vector3 pos, Vector2 size
 			ret->normalBuffer.push_back(normals[i]);
 		}
 	}
-	ret->setup();
 	return ret;
 }
 std::unique_ptr<Object3D> ObjectCreator::createSphere(Vector3 pos, float radius, int sectorCount, int stackCount, Camera* camera, Texture* tex) {
@@ -338,7 +334,6 @@ std::unique_ptr<Object3D> ObjectCreator::createSphere(Vector3 pos, float radius,
 		Vector3(pos.getX() + radius, pos.getY() + radius, pos.getZ() + radius)
 	);
 	ret->position = pos;
-	ret->setup();
 	return ret;
 }
 std::unique_ptr<Object3D> ObjectCreator::createBoxWireframe(Vector3 pos, Vector3 size, Camera* camera, Texture* texture) {
@@ -499,7 +494,6 @@ std::unique_ptr<Object3D> ObjectCreator::createBoxWireframe(Vector3 pos, Vector3
 			ret->normalBuffer.push_back(normals[i]);
 		}
 	}
-	ret->setup();
 	return ret;
 }
 std::unique_ptr<Object3D> ObjectCreator::createTerrain(Vector3 pos, int width, int height, float spacing, float scale, float heightScale, Camera* camera, Texture* tex) {
@@ -578,7 +572,6 @@ std::unique_ptr<Object3D> ObjectCreator::createTerrain(Vector3 pos, int width, i
 			ret->normalBuffer.push_back(n.z);
 		}
 	}
-	ret->setup();
 	return ret;
 }
 std::unique_ptr<Object3D> ObjectCreator::createFromOBJ(std::ifstream* file, Vector3 pos, Camera* camera, Texture* tex) {
@@ -700,6 +693,5 @@ std::unique_ptr<Object3D> ObjectCreator::createFromOBJ(std::ifstream* file, Vect
 	else {
 		ret->bounds = BoundingBox(pos, pos);
 	}
-	ret->setup();
 	return ret;
 }

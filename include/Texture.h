@@ -6,6 +6,7 @@
 	#include <android/asset_manager.h>
 #endif
 class Texture {
+friend class Object3D;
 private:
 	GLint texSampleNum = 0;
 	GLuint textureId = 0;
@@ -26,7 +27,6 @@ public:
 	GLint getTextureSample();
 	GLuint getTextureId();
 	GLint getGLType();
-	std::vector<GLfloat> toNormalBuffer();
 	void dispose();
 	Texture(std::vector<GLubyte> rgba, Program* p, Config cfg);
 	#ifdef __ANDROID__

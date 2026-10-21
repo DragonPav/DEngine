@@ -15,14 +15,18 @@ private:
 	std::vector<GLuint> indexBuffer;
 	std::vector<GLfloat> texBuffer;
 	std::vector<GLfloat> normalBuffer;
+	std::vector<GLfloat> tangentBuffer;
 	Texture* texture;
 	ObjectBuffer b;
 	Camera* cam = nullptr;
+	Texture* normalMap = nullptr;
 	RenderUtils* renderUtils = nullptr;
 	GLenum polygonMode = GL_TRIANGLES;
 	GLint shadowModelLocation = -1;
 	GLint modelLocation = -1;
 	GLint normalMatrixLocation = -1;
+	GLint useNormalMapLocation = -1;
+	GLint normalMapSampleLocation = -1;
 	friend class StaticModel;
 	friend class ObjectCreator;
 public:
@@ -31,6 +35,8 @@ public:
 	void setTexture(Texture* tex);
 	void setCamera(Camera* camera);
 	void setPolygonMode(GLenum mode);
+	void setNormalMap(Texture* tex);
+	void calculateTangents(const std::vector<GLfloat>& vertices, const std::vector<GLfloat>& texCoords, const std::vector<GLfloat>& normals, const std::vector<GLuint>& indices, std::vector<GLfloat>& tangentBuffer);
 	Vector3& getPosition();
 	BoundingBox& getBounds();
 	Texture* getTexture();

@@ -24,7 +24,7 @@
 		std::cout << "Height: " << height << std::endl;
 	}
 #endif
-ObjectBuffer RenderUtils::createStaticVAO(GLfloat* vertices, GLuint* indices, GLfloat* tex, GLfloat* normal, GLuint vertexBufSize, GLuint indexBufSize, GLuint texBufSize, GLuint normalBufSize) {
+ObjectBuffer RenderUtils::createStaticVAO(GLfloat* vertices, GLuint* indices, GLfloat* tex, GLfloat* normal, GLfloat* tangent, GLuint vertexBufSize, GLuint indexBufSize, GLuint texBufSize, GLuint normalBufSize, GLuint tangentBufSize) {
 	ObjectBuffer b;
 	//VAO
 	glGenVertexArrays(1, &b.VAO);
@@ -48,6 +48,14 @@ ObjectBuffer RenderUtils::createStaticVAO(GLfloat* vertices, GLuint* indices, GL
 		glBufferData(GL_ARRAY_BUFFER, normalBufSize, normal, GL_STATIC_DRAW);
 		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 		glEnableVertexAttribArray(2);
+	}
+	//Tangents
+	if (tangent != nullptr) {
+		glGenBuffers(1, &b.VBOtangent);
+		glBindBuffer(GL_ARRAY_BUFFER, b.VBOtangent);
+		glBufferData(GL_ARRAY_BUFFER, tangentBufSize, tangent, GL_STATIC_DRAW);
+		glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
+		glEnableVertexAttribArray(3);
 	}
 	//EBO
 	glGenBuffers(1, &b.EBO);

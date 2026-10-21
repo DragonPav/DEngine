@@ -38,8 +38,10 @@ Texture::Texture(std::vector<GLubyte> rgba, Program* p, Config cfg) {
 		texSampleNum = glGetUniformLocation(p->getId(), "textureUnit");
 		size_t size = AAsset_getLength(fileBuffer);
 		const void* buffer = AAsset_getBuffer(fileBuffer);
-		int width, height, bpp;
+		int w, h, bpp;
 		unsigned char* dat = stbi_load_from_memory((const stbi_uc*) buffer, size, &width, &height, &bpp, 4);
+		this->width = w;  
+    	this->height = h;
 		if (stbi_failure_reason()) {
 			std::cerr << "STBI error: " << stbi_failure_reason() << std::endl;
 			return;
@@ -66,8 +68,10 @@ Texture::Texture(std::vector<GLubyte> rgba, Program* p, Config cfg) {
 #else
 	Texture::Texture(Program* p, std::string file, Config cfg) {
 		texSampleNum = glGetUniformLocation(p->getId(), "textureUnit");
-		int width, height, bpp;
-		unsigned char* dat = stbi_load(file.c_str(), &width, &height, &bpp, 4);
+		int w, h, bpp;
+		unsigned char* dat = stbi_load(file.c_str(), &w, &h, &bpp, 4);
+		this->width = w;  
+    	this->height = h;
 		size_t size = static_cast<size_t>(width) * height * 4;
 		colorBuffer.insert(colorBuffer.begin(), dat, dat + size);
 		if (stbi_failure_reason()) {
@@ -117,24 +121,6 @@ GLuint Texture::getTextureId() {
 }
 GLint Texture::getGLType() {
 	return glType;
-}
-std::vector<GLfloat> Texture::toNormalBuffer() {
-	std::vector<GLfloat> result;
-	result.reserve(width * height * 4);
-	for (int i = 0; i < width * height * 4; i += 4) {
-		float r = colorBuffer[i] / 255.0f;
-		float g = colorBuffer[i + 1] / 255.0f;
-		float b = colorBuffer[i + 2] / 255.0f;
-
-		float nx = r * 2.0f - 1.0f;
-        float ny = g * 2.0f - 1.0f;
-        float nz = b * 2.0f - 1.0f;
-
-		result.push_back(nx);
-        result.push_back(ny);
-        result.push_back(nz);
-	}
-	return result;
 }
 void Texture::dispose() {
 	glDeleteTextures(1, &textureId);

@@ -36,7 +36,7 @@ GuiElement::GuiElement(Vector2 pos, Vector2 sz, Camera* guiCam, Texture* tex) {
 	texBufferSize = (GLuint) texBuffer.size() * sizeof(GLfloat);
 	Lighting* bak = guiCam->getRenderUtils()->getLighting();
 	guiCam->getRenderUtils()->setLighting(nullptr);
-	buffer = guiCam->getRenderUtils()->createStaticVAO(vertexBuffer.data(), indexBuffer.data(), texBuffer.data(), nullptr, vertexBufferSize, indexBufferSize, texBufferSize, 0);
+	buffer = guiCam->getRenderUtils()->createStaticVAO(vertexBuffer.data(), indexBuffer.data(), texBuffer.data(), nullptr, nullptr, vertexBufferSize, indexBufferSize, texBufferSize, 0, 0);
 	guiCam->getRenderUtils()->setLighting(bak);
 }
 GuiElement::~GuiElement() {
