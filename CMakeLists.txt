@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10.0)
 
-project(DEngine VERSION 1.3.6 LANGUAGES C CXX)
+project(DEngine VERSION 1.3.7 LANGUAGES C CXX)
 
 option(DENGINE_COMPILE_SAMPLES "Compile samples of DEngine" ON)
 option(BUILD_SHARED_LIBS "Compile shared libs" ON)
@@ -60,5 +60,9 @@ if(${DENGINE_COMPILE_SAMPLES})
 	## Gui sample
 	add_executable(gui_sample samples/gui_sample.cpp)
 	target_link_libraries(gui_sample DEngine)
+	## Normal map
+	add_executable(normal_map samples/normal_map.cpp)
+	target_link_libraries(normal_map DEngine)
+	## Resources
 	file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/samples/res" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 endif()
