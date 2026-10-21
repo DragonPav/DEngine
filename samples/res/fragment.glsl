@@ -9,10 +9,13 @@ in vec2 TexCoord;
 in vec3 FragPos;
 in vec3 Normal;
 in vec4 FragPosLightSpace;
+in vec4 Tangent;
 
 uniform sampler2D textureUnit;
 uniform sampler2D shadowMap;
+uniform sampler2D normalMapUnit;
 uniform vec3 cameraPos;
+uniform bool useNormalMap;
 
 struct DirectionLight {
     vec3 direction;
@@ -85,7 +88,18 @@ vec3 calcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
 }
 
 void main() {
-	vec3 norm = normalize(Normal);
+	vec3 norm;
+    if (useNormalMap) {
+        vec3 N = normalize(Normal);
+        vec3 T = normalize(Tangent.xyz);
+        vec3 B = normalize(cross(N, T)) * Tangent.w;
+        mat3 TBN = mat3(T, B, N);
+        vec3 normalFromMap = texture(normalMapUnit, TexCoord).rgb;
+        normalFromMap = normalize(normalFromMap * 2.0 - 1.0);
+        norm = normalize(TBN * normalFromMap);
+    } else {
+        norm = normalize(Normal);
+    }
     vec3 viewDir = normalize(cameraPos - FragPos);
     vec3 lightDir = normalize(-dirLight.direction);
 	vec4 texColorRGBA = texture(textureUnit, TexCoord);
