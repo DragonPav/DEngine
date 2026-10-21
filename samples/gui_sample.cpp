@@ -79,6 +79,7 @@ int main() {
 	Texture buttonH({0, 0xdd, 0, 0xff}, &program, Texture::Config());
 	Texture buttonP({0, 0xaa, 0, 0xff}, &program, Texture::Config());
 	std::unique_ptr<Object3D> box = ObjectCreator::createBox(Vector3(0, 0.5f, 0), Vector3(1, 1, 1), &cam, &cat);
+	box->setup();
 	cam.perspective(80, (float) width / (float) height, 0.1f, 100.0f);
 	//--INPUT--
 	Input input(window);

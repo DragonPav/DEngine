@@ -64,7 +64,9 @@ int main() {
 	Texture leaves(&program, "res\\leaves.png", Texture::Config());
 	Texture green({0, 0xff, 0, 0xff}, &program, Texture::Config());
 	std::unique_ptr<Object3D> box = ObjectCreator::createBox(Vector3(0, 0.5f, 0), Vector3(1, 1, 1), &cam, &leaves);
+	box->setup();
 	std::unique_ptr<Object3D> box2 = ObjectCreator::createBox(Vector3(0, 0.5f, -2), Vector3(1, 1, 1), &cam, &green);
+	box2->setup();
 	cam.perspective(80, (float) width / (float) height, 0.1f, 100.0f);
 	//--INPUT--
 	Input input(window);

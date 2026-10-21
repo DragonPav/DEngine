@@ -60,6 +60,7 @@ int main() {
 	Texture tex({0, 0xff, 0, 0xff}, &program, Texture::Config());
 	std::ifstream monkey_file("res\\monkey.obj");
 	std::unique_ptr<Object3D> box = ObjectCreator::createFromOBJ(&monkey_file, Vector3(0, 0, 0), &cam, &tex);
+	box->setup();
 	cam.perspective(80, (float) width / (float) height, 0.1f, 100.0f);
 	//--INPUT--
 	Input input(window);

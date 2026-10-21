@@ -75,7 +75,9 @@ int main() {
 	Texture yellow({0xff, 0xff, 0, 0xff}, &program, Texture::Config());
 	Texture cat(&program, "res\\out.png", Texture::Config());
 	std::unique_ptr<Object3D> platform = ObjectCreator::createSurface(Vector3(), Vector2(50, 50), &cam, &yellow);
+	platform->setup();
 	std::unique_ptr<Object3D> box = ObjectCreator::createBox(Vector3(0, 2, 0), Vector3(1, 1, 1), &cam, &cat);
+	box->setup();
 	cam.perspective(80, (float) width / (float) height, 0.1f, 100.0f);
 	//--INPUT--
 	Input input(window);
