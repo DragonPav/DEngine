@@ -79,7 +79,7 @@ int main() {
 	cam.setCameraControl(&cc);
 	AudioManager audioMan;
 	cam.setAudioManager(&audioMan);
-	Sound* sound = audioMan.createSound("res\\mouse-click-classic.mp3", box2->getPosition(), Vector2(1, 50));
+	std::unique_ptr<Sound> sound = audioMan.createSound("res\\mouse-click-classic.mp3", box2->getPosition(), Vector2(1, 50));
 	sound->setLooped(true);
 	sound->play();
 	glEnable(GL_DEPTH_TEST);

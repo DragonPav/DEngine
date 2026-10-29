@@ -1,5 +1,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
 #include <iostream>
 #include <vector>
 #include <memory>
@@ -11,7 +13,18 @@
 #include "CameraControl.h"
 #include "AudioManager.h"
 #include "GuiScreen.h"
+#include "BMFontManager.h"
+#include "GuiText.h"
 GLFWwindow* window = nullptr;
+int width, height;
+bool saveScreenshot() {
+	std::vector<unsigned char> frameBuffer(width * height * 4);
+	glPixelStorei(GL_PACK_ALIGNMENT, 1);
+	glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, frameBuffer.data());
+	stbi_flip_vertically_on_write(1);
+	int stride = width * 4;
+	return stbi_write_png("screenshot.png", width, height, 4, frameBuffer.data(), stride);
+}
 int main() {
 	//--GLFW INIT--
 	glfwInit();
@@ -44,8 +57,8 @@ int main() {
 		return 3;
 	}
 	//-GUI
-	std::ifstream vertexG("res\\vertex_nolight.glsl");
-	std::ifstream fragmentG("res\\fragment_nolight.glsl");
+	std::ifstream vertexG("res\\vertex_gui.glsl");
+	std::ifstream fragmentG("res\\fragment_gui.glsl");
 	Shader vertG(&vertexG, Shader::Type::Vertex);
 	vertG.compile();
 	Shader fragG(&fragmentG, Shader::Type::Fragment);
@@ -67,7 +80,6 @@ int main() {
 	dir.setZ(-1.0f);
 	//--CAMERA--
 	RenderUtils re(&program, &li, window);
-	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height);
 	Camera cam(&re);
@@ -75,9 +87,7 @@ int main() {
 	cam.lookAt(Vector3(0, 0, 0));
 	//--OBJECTS--
 	Texture cat(&program, "res\\out.png", Texture::Config());
-	Texture buttonN({0, 0xff, 0, 0xff}, &program, Texture::Config());
-	Texture buttonH({0, 0xdd, 0, 0xff}, &program, Texture::Config());
-	Texture buttonP({0, 0xaa, 0, 0xff}, &program, Texture::Config());
+	Texture buttonN({0, 0xff, 0, 0xff}, &programG, Texture::Config());
 	std::unique_ptr<Object3D> box = ObjectCreator::createBox(Vector3(0, 0.5f, 0), Vector3(1, 1, 1), &cam, &cat);
 	box->setup();
 	cam.perspective(80, (float) width / (float) height, 0.1f, 100.0f);
@@ -93,17 +103,24 @@ int main() {
 	//--SOUND--
 	AudioManager am;
 	cam.setAudioManager(&am);
-	Sound* click = am.createSound("res\\mouse-click-classic.mp3");
+	std::unique_ptr<Sound> click = am.createSound("res\\mouse-click-classic.mp3");
+	std::shared_ptr<Sound> click2 = std::move(click);
 	//--GUI--
 	Camera orthoCam(&re);
-	std::shared_ptr<GuiButton> button = std::make_shared<GuiButton>(Vector2(75, 40), Vector2(150, 80), &orthoCam, &buttonN, [click]() {
-		click->play();
+	std::shared_ptr<GuiButton> button = std::make_shared<GuiButton>(Vector2(75, 40), Vector2(150, 80), &orthoCam, &buttonN, [click2]() {
+		click2->play();
+		if (!saveScreenshot()) {
+			std::cerr << "Screenshot not saved" << std::endl;
+		}
 	});
-	button.get()->hoverTexture = &buttonH;
-	button.get()->pressedTexture = &buttonP;
+	BMFontManager fontManager("res\\Main.fnt", "res\\Main.png", &programG);
+	std::shared_ptr<GuiText> text = std::make_shared<GuiText>(L"Сделать скриншот", Vector2(0, 0), Vector2(0.2f, 0.2f), &orthoCam, &fontManager);
+	text->setTintColor(Vector4(1, 0, 0, 1));
 	GuiScreen gui(&re, &input, Vector2(width, height));
 	gui.addButton(button);
+	gui.addElement(text);
 	glEnable(GL_DEPTH_TEST);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glUseProgram(program.getId());
 	while (!glfwWindowShouldClose(window)) {
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -114,7 +131,7 @@ int main() {
 		cam.updateFrustum();
 
 		gui.draw(&programG);
-
+		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
