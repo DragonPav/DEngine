@@ -4,9 +4,15 @@ Sound::Sound() {
 }
 Sound::Sound(Vector3 pos) {
 	position = pos;
+	is3d = true;
 }
 Sound::~Sound() {
 	ma_sound_uninit(&sound);
+	#ifdef __ANDROID__
+		if (asset != nullptr) {
+			AAsset_close(asset);
+		}
+	#endif
 }
 void Sound::setPosition(Vector3 pos) {
 	if (is3d) position = pos;
