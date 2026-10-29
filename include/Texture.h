@@ -5,6 +5,9 @@
 #ifdef __ANDROID__
 	#include <android/asset_manager.h>
 #endif
+/** @class Texture
+ * @brief Texture info
+ */
 class Texture {
 friend class Object3D;
 private:
@@ -15,6 +18,9 @@ private:
 	int width = 0;
 	int height = 0;
 public:
+	/** @class Config
+	 * @brief Texture data
+	 */
 	class Config {
 	public:
 		bool useMipmap = true;
@@ -24,8 +30,11 @@ public:
 		int textureMagFilter = GL_NEAREST;
 		Config() = default;
 	};
+	/** @brief Returns binded texture sample location from shader */
 	GLint getTextureSample();
+	/** @brief Returns generated texture ID */
 	GLuint getTextureId();
+	/** @brief Returns GL type e.g. `GL_TEXTURE0`, `GL_TEXTURE1`, etc. */
 	GLint getGLType();
 	void dispose();
 	Texture(std::vector<GLubyte> rgba, Program* p, Config cfg);
