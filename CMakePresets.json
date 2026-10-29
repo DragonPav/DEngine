@@ -15,9 +15,9 @@
 			}
 		},
 		{
-			"name": "Android-aarch64",
+			"name": "Android",
 			"displayName": "Build for Android",
-			"description": "Buid DEngine for Android",
+			"description": "Build DEngine for Android",
 			"generator": "Ninja",
 			"binaryDir": "${sourceDir}/build/${presetName}",
 			"cacheVariables": {

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10.0)
 
-project(DEngine VERSION 1.3.7 LANGUAGES C CXX)
+project(DEngine VERSION 1.3.8 LANGUAGES C CXX)
 
 option(DENGINE_COMPILE_SAMPLES "Compile samples of DEngine" ON)
 option(BUILD_SHARED_LIBS "Compile shared libs" ON)
@@ -23,7 +23,7 @@ if(WIN32 OR LINUX)
 elseif(ANDROID)
 	message(STATUS "Compiling for Android")
 	if(${DENGINE_COMPILE_SAMPLES})
-		message(WARNING "Disabling compiling of samples. Doesn't supported on Android")
+		message(WARNING "Disabling compiling of samples. Don't supported on Android")
 		set(DENGINE_COMPILE_SAMPLES OFF)
 	endif()
 	add_library(DEngine ${DENGINE_SOURCES} ${DENGINE_HEADERS})
