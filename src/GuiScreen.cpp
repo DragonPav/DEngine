@@ -33,7 +33,8 @@ void GuiScreen::resize(int screenWidth, int screenHeight) {
 void GuiScreen::draw(Program* guiProgram) {
 	if (elements.empty()) return;
 	Program* oldProgram = guiCam->getRenderUtils()->getProgram();
-	glDisable(GL_DEPTH_TEST);
+	GLboolean depthTestEnabled = glIsEnabled(GL_DEPTH_TEST);
+	if (depthTestEnabled) glDisable(GL_DEPTH_TEST);
 	glUseProgram(guiProgram->getId());
 	Matrix4& proj = guiCam->getProjection();
 	proj.uniformL = glGetUniformLocation(guiProgram->getId(), "projection");
@@ -50,5 +51,5 @@ void GuiScreen::draw(Program* guiProgram) {
 	if (oldProgram != nullptr) {
 		glUseProgram(oldProgram->getId());
 	}
-	glEnable(GL_DEPTH_TEST);
+	if (depthTestEnabled) glEnable(GL_DEPTH_TEST);
 }

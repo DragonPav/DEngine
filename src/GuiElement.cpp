@@ -14,13 +14,13 @@ GuiElement::GuiElement(Vector2 pos, Vector2 sz, Camera* guiCam, Texture* tex) {
 	};
 	GLuint indices[] = {
 		0, 1, 2,
-		2, 3, 1
+		1, 3, 2
 	};
 	GLfloat texCoords[] = {
-		1, 0,
 		0, 0,
-		1, 1,
-		0, 1
+		1, 0,
+		0, 1,
+		1, 1
 	};
 	for (size_t i = 0; i < sizeof(vertices) / sizeof(GLfloat); i++) {
 		vertexBuffer.push_back(vertices[i]);
@@ -38,23 +38,27 @@ GuiElement::GuiElement(Vector2 pos, Vector2 sz, Camera* guiCam, Texture* tex) {
 	guiCam->getRenderUtils()->setLighting(nullptr);
 	buffer = guiCam->getRenderUtils()->createStaticVAO(vertexBuffer.data(), indexBuffer.data(), texBuffer.data(), nullptr, nullptr, vertexBufferSize, indexBufferSize, texBufferSize, 0, 0);
 	guiCam->getRenderUtils()->setLighting(bak);
+	tintColor = Vector4(1, 1, 1, 1);
 }
 GuiElement::~GuiElement() {
 	glDeleteVertexArrays(1, &buffer.VAO);
-	std::vector<GLuint> buffersToDelete;
-	buffersToDelete.push_back(buffer.VBO);
-	buffersToDelete.push_back(buffer.VBOtexture);
-	buffersToDelete.push_back(buffer.EBO);
+	std::vector<GLuint> buffersToDelete = {buffer.VBO, buffer.VBOtexture, buffer.EBO};
 	glDeleteBuffers((GLuint) buffersToDelete.size(), buffersToDelete.data());
 	buffer = ObjectBuffer();
 }
 void GuiElement::draw(Program* guiProgram) {
 	if (guiProgram == nullptr) return;
-	GLint texSampleLoc = glGetUniformLocation(guiProgram->getId(), "textureUnit");
-	Matrix4 modelMatrix;
-	modelMatrix.uniformL = glGetUniformLocation(guiProgram->getId(), "model");
-	modelMatrix.values = glm::translate(glm::mat4(1.0f), glm::vec3(position.getX(), position.getY(), 0.0f));
+	if (texSampleLoc == -1) texSampleLoc = glGetUniformLocation(guiProgram->getId(), "textureUnit");
+	if (modelUniform == -1) modelUniform = glGetUniformLocation(guiProgram->getId(), "model");
+	modelMatrix.uniformL = modelUniform;
+	if (!matrixValueSet) {
+		matrixValueSet = true;
+		modelMatrix.values = glm::translate(glm::mat4(1.0f), glm::vec3(position.getX(), position.getY(), 0.0f));
+	}
 	modelMatrix.uniform();
+	if (tintColorUniform == -1) tintColorUniform = glGetUniformLocation(guiProgram->getId(), "colorTint");
+	tintColor.setUniform(tintColorUniform);
+	tintColor.uniform();
 	glActiveTexture(textureRef->getGLType());
 	glBindTexture(GL_TEXTURE_2D, textureRef->getTextureId());
 	if (texSampleLoc != -1) {
@@ -70,4 +74,13 @@ Vector2& GuiElement::getPosition() {
 }
 Vector2& GuiElement::getSize() {
 	return size;
+}
+void GuiElement::setTintColor(Vector4 color) {
+	tintColor = color;
+}
+Vector4& GuiElement::getTintColor() {
+	return tintColor;
+}
+Matrix4& GuiElement::getModelMatrix() {
+	return modelMatrix;
 }
