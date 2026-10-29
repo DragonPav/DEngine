@@ -6,6 +6,9 @@
 #include "BoundingBox.h"
 class Camera;
 class RenderUtils;
+/** @class Object3D
+ * @brief Used for renderable object
+ */
 class Object3D {
 private:
 	Vector3 position;
@@ -36,6 +39,7 @@ public:
 	void setCamera(Camera* camera);
 	void setPolygonMode(GLenum mode);
 	void setNormalMap(Texture* tex);
+	/** @brief Calculate tangents to given tangent buffer */
 	void calculateTangents(const std::vector<GLfloat>& vertices, const std::vector<GLfloat>& texCoords, const std::vector<GLfloat>& normals, const std::vector<GLuint>& indices, std::vector<GLfloat>& tangentBuffer);
 	Vector3& getPosition();
 	BoundingBox& getBounds();
@@ -46,6 +50,7 @@ public:
 	void setup();
 	void begin();
 	void render(Program* currentProgram, bool isShadowPass);
+	/** @brief Destroy `Object3D` */
 	void dispose();
 	Object3D() = delete;
 	Object3D(Camera* camera, RenderUtils* rend, Texture* tex);

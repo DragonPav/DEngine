@@ -10,6 +10,9 @@
 class Camera;
 class RenderUtils;
 class Input;
+/** @class CameraControl
+ * @brief Controls `Camera` from user input
+*/
 class CameraControl {
 private:
 	void mouseButtonCallback(int button, int action);
@@ -27,8 +30,9 @@ public:
 	bool firstPress = false;
 	int buttonCbId = -1;
 	int moveCbId = -1;
-	// @brief This function is only for Camera
+	/** @brief This function is only for Camera */
 	void setup(Camera* camera);
+	/** @brief Set sentivity of `CameraControl` */
 	void setSensitivity(float sense);
 	CameraControl() = delete;
 	~CameraControl();

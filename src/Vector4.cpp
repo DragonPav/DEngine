@@ -1,4 +1,5 @@
 #include "Vector4.h"
+#include "Logger.h"
 Vector4::Vector4(GLfloat x, GLfloat y, GLfloat z, GLfloat w) {
 	this->x = x;
 	this->y = y;
@@ -10,7 +11,8 @@ Vector4::Vector4(GLint loc) {
 }
 void Vector4::uniform() {
 	if (uniformL == -1) {
-		throw std::runtime_error("uniform is -1");
+		Logger::print(Logger::Error, "[Vector4]: uniform is -1");
+		return;
 	}
 	glUniform4f(uniformL, x, y, z, w);
 }
@@ -44,8 +46,8 @@ void Vector4::setW(GLfloat w) {
 void Vector4::setUniform(GLint unif) {
 	if (unif >= -1) {
 		uniformL = unif;
-	}
-	else {
-		throw std::runtime_error("uniform less than -1 invalid");
+	} else {
+		Logger::print(Logger::Error, "[Vector4]: uniform less than -1 invalid");
+		return;
 	}
 }

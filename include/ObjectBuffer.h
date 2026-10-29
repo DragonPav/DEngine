@@ -4,6 +4,9 @@
 #else
     #include <GLES3/gl32.h>
 #endif
+/** @struct ObjectBuffer
+ * @brief Used for store `Object3D` buffers IDs
+ */
 struct ObjectBuffer {
     GLuint VAO = 0;
     GLuint VBO = 0;

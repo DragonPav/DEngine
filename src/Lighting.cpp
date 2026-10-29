@@ -226,11 +226,15 @@ void Lighting::bind() {
 		pointLight.bind();
 	}
 }
-void Lighting::addPointLight(Program* program, Vector3 position) {
+int Lighting::addPointLight(Program* program, Vector3 position) {
 	if (pointLights.size() >= MAX_POINT_LIGHTS_COUNT) {
 		std::cout << "Point lights count limit reached" << std::endl;
-		return;
+		return -1;
 	}
 	int index = pointLights.size();
 	pointLights.push_back(PointLight(program, index));
+	return pointLights.size() - 1;
+}
+void Lighting::removePointLight(int index) {
+	pointLights.erase(pointLights.begin() + index);
 }

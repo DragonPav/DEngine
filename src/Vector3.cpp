@@ -1,4 +1,5 @@
 #include "Vector3.h"
+#include "Logger.h"
 Vector3::Vector3(GLfloat x, GLfloat y, GLfloat z) {
 	this->x = x;
 	this->y = y;
@@ -9,7 +10,7 @@ Vector3::Vector3(GLint loc) {
 }
 void Vector3::uniform() {
 	if (uniformL == -1) {
-		std::cerr << "uniform is -1" << std::endl;
+		Logger::print(Logger::Error, "[Vector3]: uniform is -1");
 		return;
 	}
 	glUniform3f(uniformL, x, y, z);
@@ -38,8 +39,8 @@ void Vector3::setZ(GLfloat z) {
 void Vector3::setUniform(GLint unif) {
 	if (unif >= -1) {
 		uniformL = unif;
-	}
-	else {
-		throw std::runtime_error("uniform less than -1 invalid");
+	} else {
+		Logger::print(Logger::Error, "[Vector3]: uniform less than -1 is invalid");
+		return;
 	}
 }

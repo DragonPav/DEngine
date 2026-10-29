@@ -1,13 +1,17 @@
 #include "Object3D.h"
+#include "Logger.h" 
 Object3D::Object3D(Camera* camera, RenderUtils* rend, Texture* tex) {
 	if (camera == nullptr) {
-		throw std::runtime_error("Camera is null");
+		Logger::print(Logger::Error, "[Object3D]: Camera is null");
+		return;
 	}
 	if (rend == nullptr) {
-		throw std::runtime_error("RenderUtils is null");
+		Logger::print(Logger::Error, "[Object3D]: RenderUtils is null");
+		return;
 	}
 	if (tex == nullptr) {
-		throw std::runtime_error("Texture is null");
+		Logger::print(Logger::Error, "[Object3D]: Texture is null");
+		return;
 	}
 	this->cam = camera;
 	renderUtils = rend;
@@ -80,7 +84,7 @@ void Object3D::calculateTangents(const std::vector<GLfloat>& vertices, const std
 
         float w = (glm::dot(glm::cross(n, t), tan2[a]) < 0.0f) ? -1.0f : 1.0f;
 
-        tangentBuffer[a * 4]     = tangent.x;
+        tangentBuffer[a * 4] = tangent.x;
         tangentBuffer[a * 4 + 1] = tangent.y;
         tangentBuffer[a * 4 + 2] = tangent.z;
         tangentBuffer[a * 4 + 3] = w;
@@ -182,14 +186,15 @@ void Object3D::render(Program* currentProgram, bool isShadowPass) {
 		cam->getRenderUtils()->getLighting()->bind();
 	}
 	if (texture->getTextureSample() == -1) {
-		std::cerr << "texture.texSampleNum is -1" << std::endl;
+		Logger::print(Logger::Error, "[Object3D]: texture.texSampleNum is -1");
 		return;
 	}
 	glUniform1i(texture->getTextureSample(), texture->getGLType() - GL_TEXTURE0);
 	glDrawElements(polygonMode, (GLuint) indexBuffer.size(), GL_UNSIGNED_INT, 0);
-	GLenum err;
-	while ((err = glGetError()) != GL_NO_ERROR) {
-		std::cout << "OpenGL error occured: 0x" << std::hex << err << std::dec << std::endl;
+	GLenum err = glGetError();
+	while ((err != GL_NO_ERROR)) {
+		Logger::print(Logger::Error, "[Object3D]: OpenGL error occured: " + std::to_string(err));
+		return;
 	}
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -201,10 +206,7 @@ void Object3D::render(Program* currentProgram, bool isShadowPass) {
 }
 void Object3D::dispose() {
 	glDeleteVertexArrays(1, &b.VAO);
-	std::vector<GLuint> buffersToDelete;
-	buffersToDelete.push_back(b.VBO);
-	buffersToDelete.push_back(b.VBOtexture);
-	buffersToDelete.push_back(b.EBO);
+	std::vector<GLuint> buffersToDelete = {b.VBO, b.VBOtexture, b.EBO};
 	if (cam->getRenderUtils()->getLighting() != nullptr) buffersToDelete.push_back(b.VBOnormal);
 	if (b.VBOtangent != 0) buffersToDelete.push_back(b.VBOtangent);
 	glDeleteBuffers((GLuint) buffersToDelete.size(), buffersToDelete.data());

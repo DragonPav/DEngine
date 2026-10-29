@@ -21,28 +21,30 @@ public:
 	#else
 		void setWindow(GLFWwindow* win);
 	#endif
-	/* @param `li` may be null, if you dont want use lighting, normals, etc. */
+	/** @param li May be null, if you dont want use lighting, normals, etc. */
 	void setLighting(Lighting* li);
-	/* Sets program for some objects. */
+	/** @brief Sets program for some objects. */
 	void setProgram(Program* prog);
 	#ifdef __ANDROID__
 		void* getWindow() { return nullptr; };
 	#else
 		GLFWwindow* getWindow();
 	#endif
-	/* @return If Lighting was set, then returns Ligthing*, else (and by the default) nullptr */
+	/** @return If Lighting was set, then returns Ligthing*, else (and by the default) nullptr */
 	Lighting* getLighting();
 	Program* getProgram();
 	RenderUtils() = delete;
 	#ifdef __ANDROID__
-		/* @param `program` Main Program.
-		@param `li` Lighting*, can be null. 
-		@param `window` Main window. */
+		/** @param `program` Main Program.
+		* @param `li` Lighting*, can be null. 
+		* @param `window` Main window.
+		*/
 		RenderUtils(Program* program, Lighting* li, void* window);
 	#else
-		/* @param `program` Main Program.
-		@param `li` Lighting*, can be null. 
-		@param `window` Main window. */
+		/** @param `program` Main Program.
+		* @param `li` Lighting*, can be null. 
+		* @param `window` Main window.
+		*/
 		RenderUtils(Program* program, Lighting* li, GLFWwindow* window);
 	#endif
 };

@@ -1,4 +1,5 @@
 #include "Program.h"
+#include "Logger.h"
 Program::Program(Shader* vertex, Shader* fragment) {
 	v = vertex;
 	f = fragment;
@@ -11,7 +12,7 @@ Program::Program(Shader* vertex, Shader* fragment) {
 	programId = glCreateProgram();
 	glAttachShader(programId, vertex->getId());
 	glAttachShader(programId, fragment->getId());
-	std::cout << "Program with id: " << programId << " created." << std::endl;
+	Logger::print(Logger::Info, "[Program]: Program with id: " + std::to_string(programId) + " created.");
 }
 Program::~Program() {
 	deleteProgram();
@@ -26,13 +27,15 @@ bool Program::link() {
 	if (status == GL_TRUE) {
 		v->deleteShader();
 		f->deleteShader();
-		std::cout << "Program with id: " << programId << " successfully linked." << std::endl;
+		Logger::print(Logger::Info, "[Program::link()]: Program with id: " + std::to_string(programId) + " successfully linked.");
 		return true;
-	}
-	else {
-		GLchar infoLog[512];
-		glGetProgramInfoLog(programId, 512, NULL, infoLog);
-		std::cerr << "Failed to link program: " << infoLog << std::endl;
+	} else {
+		GLchar infoLog[512] = {0};
+		glGetProgramInfoLog(programId, sizeof(infoLog), nullptr, infoLog);
+		std::string str = "[Program::link()]: Failed to link program with id: " + std::to_string(programId) + " Error log:";
+		Logger::print(Logger::Error, str);
+		Logger::print(Logger::Error, "-------------------------");
+		Logger::print(Logger::Error, infoLog);
 		deleteProgram();
 		return false;
 	}

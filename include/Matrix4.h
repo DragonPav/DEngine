@@ -10,6 +10,9 @@
 	#include <GL/glew.h>
 #endif
 class Object3D;
+/** @class Matrix4
+ * @brief Used for matrix operations
+ */
 class Matrix4 {
 public:
 	glm::mat4 values{};

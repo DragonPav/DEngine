@@ -8,6 +8,9 @@
 #include <unordered_map>
 #include <string>
 #include <functional>
+/** @class Input
+ * @brief Used for input processing
+ */
 class Input {
 private:
 	std::unordered_map<int, std::function<void(int, int)>> mouseButtonCallbacks;
@@ -27,14 +30,21 @@ private:
 public:
 	static const int KEY_PRESSED = 1;
 	static const int KEY_RELEASED = 0;
+	/** @brief Add mouse button processing callback */
 	int addMouseButtonCallback(std::function<void(int, int)> cb);
+	/** @brief Remove mouse button processing callback */
 	void removeMouseButtonCallback(int id);
+	/** @brief Add mouse position processing callback */
 	int addMousePosCallback(std::function<void(double, double)> cb);
+	/** @brief Remove mouse position processing callback */
 	void removeMousePosCallback(int id);
+	/** @brief Add keyboard callback */
 	int addKeyboardCallback(std::function<void(int, int)> cb);
+	/** @brief Remove keyboard callback */
 	void removeKeyboardCallback(int id);
 	Input() = delete;
 	#ifdef __ANDROID__
+		/** Must be called for input processing on Android OS */
 		bool handleAndroidInput(const AInputEvent* event);
 		Input(void* win);
 	#else

@@ -1,4 +1,5 @@
 #include "Vector2.h"
+#include "Logger.h"
 Vector2::Vector2(GLfloat x, GLfloat y) {
 	this->x = x;
 	this->y = y;
@@ -8,7 +9,8 @@ Vector2::Vector2(GLint loc) {
 }
 void Vector2::uniform() {
 	if (uniformL == -1) {
-		throw std::runtime_error("uniform is -1");
+		Logger::print(Logger::Error, "[Vector2]: uniform is -1");
+		return;
 	}
 	glUniform2f(uniformL, x, y);
 }
@@ -30,8 +32,8 @@ void Vector2::setY(GLfloat y) {
 void Vector2::setUniform(GLint unif) {
 	if (unif >= -1) {
 		uniformL = unif;
-	}
-	else {
-		throw std::runtime_error("uniform less than -1 invalid");
+	} else {
+		Logger::print(Logger::Error, "[Vector2]: uniform less than -1 invalid");
+		return;
 	}
 }

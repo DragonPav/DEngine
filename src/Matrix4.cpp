@@ -1,8 +1,10 @@
 ﻿#include "Object3D.h"
 #include "Matrix4.h"
+#include "Logger.h"
 void Matrix4::uniform() {
 	if (uniformL == -1) {
-		throw std::runtime_error("uniform is -1");
+		Logger::print(Logger::Error, "[Matrix4]: uniform is -1");
+		return;
 	}
 	glUniformMatrix4fv(uniformL, 1, GL_FALSE, glm::value_ptr(values));
 }

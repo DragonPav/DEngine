@@ -1,27 +1,28 @@
 #include "RenderUtils.h"
+#include "Logger.h"
 #ifdef __ANDROID__
 	RenderUtils::RenderUtils(Program* program, Lighting* li, void* window) {
 		p = program;
 		lighting = li;
 		this->window = window;
-		//Some logging
-		std::cout << "Initializing RenderUtils..." << std::endl;
-		std::cout << "------------------------" << std::endl;
-		std::cout << "GPU: " << glGetString(GL_RENDERER) << std::endl;
+		Logger::print(Logger::Info, "Initializing RenderUtils...");
+		Logger::print(Logger::Info, "------------------------");
+		const char* gpuName = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+		Logger::print(Logger::Info, "[RenderUtils]: GPU: " + std::string(gpuName));
 	}
 #else
 	RenderUtils::RenderUtils(Program* program, Lighting* li, GLFWwindow* window) {
 		p = program;
 		lighting = li;
 		this->window = window;
-		//Some logging
-		std::cout << "Initializing RenderUtils..." << std::endl;
-		std::cout << "------------------------" << std::endl;
-		std::cout << "GPU: " << glGetString(GL_RENDERER) << std::endl;
+		Logger::print(Logger::Info, "Initializing RenderUtils...");
+		Logger::print(Logger::Info, "------------------------");
+		const char* gpuName = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+		Logger::print(Logger::Info, "[RenderUtils]: GPU: " + std::string(gpuName));
 		int width, height;
 		glfwGetFramebufferSize(window, &width, &height);
-		std::cout << "Width: " << width << std::endl;
-		std::cout << "Height: " << height << std::endl;
+		Logger::print(Logger::Info, "[RenderUtils]: Width: " + std::to_string(width));
+		Logger::print(Logger::Info, "[RenderUtils]: Height: " + std::to_string(height));
 	}
 #endif
 ObjectBuffer RenderUtils::createStaticVAO(GLfloat* vertices, GLuint* indices, GLfloat* tex, GLfloat* normal, GLfloat* tangent, GLuint vertexBufSize, GLuint indexBufSize, GLuint texBufSize, GLuint normalBufSize, GLuint tangentBufSize) {
@@ -78,13 +79,13 @@ void RenderUtils::setLighting(Lighting* li) {
 	lighting = li;
 }
 void RenderUtils::setProgram(Program* prog) {
-	if (p == nullptr) {
-		throw std::runtime_error("RenderUtils::setProgram p is null");
+	if (prog == nullptr) {
+		Logger::print(Logger::Error, "[RenderUtils::setProgram()]: prog is null");
 		return;
 	}
 	p = prog;
 }
-#ifdef _WIN32
+#ifndef __ANDROID__
 	GLFWwindow* RenderUtils::getWindow() {
 		return window;
 	}

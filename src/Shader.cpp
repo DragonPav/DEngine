@@ -3,8 +3,7 @@
 #ifdef __ANDROID__
 	Shader::Shader(AAsset *file, Type type) {
 		if (file == nullptr) {
-			std::string str = "Failed to open a file! in Shader";
-			Logger::print(Logger::Error, str);
+			Logger::print(Logger::Error, "[Shader]: Failed to open a file!");
 			return;
 		}
 		const char* buffer = (const char*) AAsset_getBuffer(file);
@@ -28,8 +27,7 @@
 			name = "Fragment";
 			break;
 		}
-		std::string str = "Shader with type: " + name + ", id: " + std::to_string(shaderId) + " created.";
-		Logger::print(Logger::Info, str);
+		Logger::print(Logger::Info, "[Shader]: Shader with type: " + name + ", id: " + std::to_string(shaderId) + " created.");
 		this->type = type;
 		const GLchar* buf = source.c_str();
 		glShaderSource(shaderId, 1, &buf, NULL);
@@ -37,8 +35,7 @@
 #else
 	Shader::Shader(std::ifstream *file, Type type) {
 		if (!file->is_open()) {
-			std::string str = "Failed to open a file! Shader type: " + type;
-			Logger::print(Logger::Error, str);
+			Logger::print(Logger::Error, "[Shader]: Failed to open a file!");
 			return;
 		}
 		std::string source;
@@ -59,8 +56,7 @@
 			break;
 		}
 		this->type = type;
-		std::string str = "Shader with type: " + name + ", id: " + std::to_string(shaderId) + " created.";
-		Logger::print(Logger::Info, str);
+		Logger::print(Logger::Info, "[Shader]: Shader with type: " + name + ", id: " + std::to_string(shaderId) + " created.");
 		const GLchar* buf = source.c_str();
 		glShaderSource(shaderId, 1, &buf, NULL);
 	}
@@ -73,14 +69,12 @@ bool Shader::compile() {
 	GLint status;
 	glGetShaderiv(shaderId, GL_COMPILE_STATUS, &status);
 	if (status == GL_TRUE) {
-		std::string msg = "Shader with id: " + std::to_string(shaderId) + " sucessfully compiled";
-		Logger::print(Logger::Info, msg);
+		Logger::print(Logger::Info, "[Shader::compile()]: Shader with id: " + std::to_string(shaderId) + " sucessfully compiled");
 		return true;
-	}
-	else {
+	} else {
 		GLchar infoLog[512];
 		glGetShaderInfoLog(shaderId, 512, NULL, infoLog);
-		std::string str = "Failed to compile shader with id: " + std::to_string(shaderId) + " Error log:";
+		std::string str = "[Shader::compile()]: Failed to compile shader with id: " + std::to_string(shaderId) + " Error log:";
 		Logger::print(Logger::Error, str);
 		Logger::print(Logger::Error, "-------------------------");
 		Logger::print(Logger::Error, infoLog);

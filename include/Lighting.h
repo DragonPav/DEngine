@@ -8,6 +8,9 @@
 #else
 	#include <GL/glew.h>
 #endif
+/** @class DirLight
+ * @brief Directional light
+ */
 class DirLight {
 private:
 	Program* p;
@@ -25,19 +28,33 @@ public:
 	DirLight() = delete;
 	DirLight(Program* p);
 	void setProgram(Program* prog);
+	/** @brief Set ambient color */
 	void setAmbient(Vector3 a);
+	/** @brief Set diffuse/main color */
 	void setDiffuse(Vector3 d);
+	/** @brief Set specular color/force */
 	void setSpecular(Vector3 s);
+	/** @brief Set light direction */
 	void setDirection(Vector3 dir);
 	Program* getProgram();
+	/** @brief Get ambient color */
 	Vector3& getAmbient();
+	/** @brief Get diffuse/main color */
 	Vector3& getDiffuse();
+	/** @brief Get specular color/force */
 	Vector3& getSpecular();
+	/** @brief Get light direction */
 	Vector3& getDirection();
+	/** @brief Internal use */
 	void initShadows();
+	/** @brief Destroy light */
 	void dispose();
+	/** @brief Internal use */
 	void bind();
 };
+/** @class PointLight
+ * @brief Point light
+ */
 class PointLight {
 private:
 	Program* p;
@@ -53,25 +70,42 @@ private:
 	GLint quadraticLoc = -1;
 public:
 	void setProgram(Program* prog);
+	/** @brief Set ambient color */
 	void setAmbient(Vector3 a);
+	/** @brief Set diffuse/main color */
 	void setDiffuse(Vector3 d);
+	/** @brief Set specular color/force */
 	void setSpecular(Vector3 s);
+	/** @brief Set light position */
 	void setPosition(Vector3 dir);
+	/** @brief Set light constant location from shader */
 	void setConstantLocation(GLint loc);
+	/** @brief Set light linear location from shader */
 	void setLinearLocation(GLint loc);
+	/** @brief Set light quadratic location from shader */
 	void setQuadraticLocation(GLint loc);
 	Program* getProgram();
+	/** @brief Get ambient color */
 	Vector3& getAmbient();
+	/** @brief Get main/diffuse color */
 	Vector3& getDiffuse();
+	/** @brief Get specular color/force */
 	Vector3& getSpecular();
+	/** @brief Get light position */
 	Vector3& getPosition();
+	/** @brief Get constant location from shader */
 	GLint getConstantLocation();
+	/** @brief Get linear location from shader */
 	GLint getLinearLocation();
+	/** @brief Get quadratic location from shader */
 	GLint getQuadraticLocation();
 	void bind();
 	PointLight() = delete;
 	PointLight(Program* p, GLint number);
 };
+/** @class Lighting
+ * @brief Used for lighting render and settings
+ */
 class Lighting {
 private:
 	GLint shadowPassMatrixLoc = -1;
@@ -84,8 +118,14 @@ public:
 	Lighting() = delete;
 	Lighting(Vector3 camPos, Program* p);
 	~Lighting();
+	/** @brief Destroy `Lighting` */
 	void dispose();
+	/** @brief Should be called when shadow pass begins */
 	void beginShadows(Program* shProg);
+	/** @brief Should be called when shadow pass ends */
 	void endShadows(int width, int height, Program* mainProg);
-	void addPointLight(Program* program, Vector3 position);
+	/** @brief Add new point light to the `Lighting` */
+	int addPointLight(Program* program, Vector3 position);
+	/** @brief Remove point light from `Lighting` */
+	void removePointLight(int index);
 };
