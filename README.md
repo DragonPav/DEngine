@@ -33,8 +33,6 @@
 - **DENGINE_COMPILE_SAMPLES**: Compile samples for desktops if ON, **not** supported on Android yet.
 - **BUILD_SHARED_LIBS**: Enabled by default.
 
-*CMakePresets.txt based on my PC, so maybe you should delete this.*
-
 ## Screenshots
 <img src="readme_assets/obj.png" alt="obj" />
 <img src="readme_assets/shadow.png" alt="shadow" />
