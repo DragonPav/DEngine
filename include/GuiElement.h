@@ -26,7 +26,6 @@ protected:
 	GLint modelUniform = -1;
 	GLint tintColorUniform = -1;
 	GLint isTextUniform = -1;
-	bool matrixValueSet = false;
 public:
 	GuiElement(Vector2 pos, Vector2 sz, Camera* guiCam, Texture* tex);
 	virtual ~GuiElement();

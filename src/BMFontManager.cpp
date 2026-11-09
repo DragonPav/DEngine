@@ -28,7 +28,7 @@ void BMFontManager::parseFile(std::stringstream& strStream) {
 			if (eqPos != std::string::npos) {
 				std::string value = token.substr(eqPos + 1);
 				charCount = std::stoi(value);
-				chars = new BMFontChar[charCount];
+				chars = new BMFontChar[charCount]();
 			}
 		} else if (type == "char") {
 			BMFontChar newChar;

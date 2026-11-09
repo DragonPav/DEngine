@@ -4,10 +4,12 @@ Program::Program(Shader* vertex, Shader* fragment) {
 	v = vertex;
 	f = fragment;
 	if (vertex->getType() != Shader::Type::Vertex) {
-		throw std::runtime_error("vShader must be Vertex");
+		Logger::print(Logger::Error, "[Program]: vertex shader must be Vertex");
+		return;
 	}
 	if (fragment->getType() != Shader::Type::Fragment) {
-		throw std::runtime_error("fShader must be Fragment");
+		Logger::print(Logger::Error, "[Program]: fragment shader must be Fragment");
+		return;
 	}
 	programId = glCreateProgram();
 	glAttachShader(programId, vertex->getId());

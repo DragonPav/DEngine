@@ -1,5 +1,8 @@
 #include "GuiText.h"
 void GuiText::updateText() {
+	vertexBuffer.clear();
+	texBuffer.clear();
+	indexBuffer.clear();
 	if (manager != nullptr) {
 		textureRef = manager->getPage();
 	}
@@ -70,6 +73,11 @@ GuiText::GuiText(std::wstring text, Vector2 pos, Vector2 sz, Camera* guiCam, BMF
 	size = sz;
 	manager = mgr;
 	cameraRef = guiCam;
+	tintColor = Vector4(0, 0, 0, 1);
+	updateText();
+}
+void GuiText::setText(std::wstring text) {
+	this->text = text;
 	updateText();
 }
 void GuiText::draw(Program* guiProgram) {
@@ -78,11 +86,8 @@ void GuiText::draw(Program* guiProgram) {
 	if (modelUniform == -1) modelUniform = glGetUniformLocation(guiProgram->getId(), "model");
 	if (isTextUniform == -1) isTextUniform = glGetUniformLocation(guiProgram->getId(), "isText");
 	modelMatrix.uniformL = modelUniform;
-	if (!matrixValueSet) {
-		matrixValueSet = true;
-		modelMatrix.values = glm::translate(glm::mat4(1.0f), glm::vec3(position.getX(), position.getY(), 0.0f));
-		modelMatrix.values = glm::scale(modelMatrix.values, glm::vec3(size.getX(), size.getY(), 1.0f));
-	}
+	modelMatrix.values = glm::translate(glm::mat4(1.0f), glm::vec3(position.getX(), position.getY(), 0.0f));
+	modelMatrix.values = glm::scale(modelMatrix.values, glm::vec3(size.getX(), size.getY(), 1.0f));
 	modelMatrix.uniform();
 	if (tintColorUniform == -1) tintColorUniform = glGetUniformLocation(guiProgram->getId(), "colorTint");
 	tintColor.setUniform(tintColorUniform);

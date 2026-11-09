@@ -84,9 +84,7 @@ Texture::Texture(std::vector<GLubyte> rgba, Program* p, Config cfg) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, cfg.textureWrapT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, cfg.textureMinFilter);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, cfg.textureMagFilter);
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, colorBuffer.data());
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 		GLenum err = glGetError();
 		if (err != GL_NO_ERROR) {
 			Logger::print(Logger::Error, "[Texture]: Texture setup failure: GL error: " + std::to_string(err));

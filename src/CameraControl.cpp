@@ -54,6 +54,15 @@ void CameraControl::setup(Camera* came) {
 	float dy = camera->getCameraPos().getY() - camera->getLookPos().getY();
 	float dz = camera->getCameraPos().getZ() - camera->getLookPos().getZ();
 	radius = sqrt(dx * dx + dy * dy + dz * dz);
+	if (radius > 0.0f) {
+        pitch = glm::degrees(asin(dy / radius));
+        yaw = glm::degrees(atan2(dz, dx));
+    } else {
+        pitch = 0.0f;
+        yaw = 0.0f;
+    }
+    pressed = false;
+    firstPress = true;
 }
 void CameraControl::setSensitivity(float sense) {
 	sensitivity = sense;

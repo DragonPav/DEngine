@@ -192,7 +192,7 @@ void Object3D::render(Program* currentProgram, bool isShadowPass) {
 	glUniform1i(texture->getTextureSample(), texture->getGLType() - GL_TEXTURE0);
 	glDrawElements(polygonMode, (GLuint) indexBuffer.size(), GL_UNSIGNED_INT, 0);
 	GLenum err = glGetError();
-	while ((err != GL_NO_ERROR)) {
+	if (err != GL_NO_ERROR) {
 		Logger::print(Logger::Error, "[Object3D]: OpenGL error occured: " + std::to_string(err));
 		return;
 	}

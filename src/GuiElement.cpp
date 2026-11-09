@@ -51,10 +51,7 @@ void GuiElement::draw(Program* guiProgram) {
 	if (texSampleLoc == -1) texSampleLoc = glGetUniformLocation(guiProgram->getId(), "textureUnit");
 	if (modelUniform == -1) modelUniform = glGetUniformLocation(guiProgram->getId(), "model");
 	modelMatrix.uniformL = modelUniform;
-	if (!matrixValueSet) {
-		matrixValueSet = true;
-		modelMatrix.values = glm::translate(glm::mat4(1.0f), glm::vec3(position.getX(), position.getY(), 0.0f));
-	}
+	modelMatrix.values = glm::translate(glm::mat4(1.0f), glm::vec3(position.getX(), position.getY(), 0.0f));
 	modelMatrix.uniform();
 	if (tintColorUniform == -1) tintColorUniform = glGetUniformLocation(guiProgram->getId(), "colorTint");
 	tintColor.setUniform(tintColorUniform);
@@ -62,7 +59,7 @@ void GuiElement::draw(Program* guiProgram) {
 	glActiveTexture(textureRef->getGLType());
 	glBindTexture(GL_TEXTURE_2D, textureRef->getTextureId());
 	if (texSampleLoc != -1) {
-		glUniform1i(texSampleLoc, textureRef->getGLType() % GL_TEXTURE0);
+		glUniform1i(texSampleLoc, textureRef->getGLType() - GL_TEXTURE0);
 	}
 	glBindVertexArray(buffer.VAO);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

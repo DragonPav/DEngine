@@ -1,7 +1,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include <vector>
 #include <memory>
 #include "Program.h"
 #include "Object3D.h"

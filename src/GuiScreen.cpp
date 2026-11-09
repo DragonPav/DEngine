@@ -28,7 +28,7 @@ void GuiScreen::addButton(std::shared_ptr<GuiButton> button) {
 }
 
 void GuiScreen::resize(int screenWidth, int screenHeight) {
-    guiCam->ortho(0.0f, (float)screenWidth, 0.0f, (float)screenHeight, -1.0f, 1.0f);
+    guiCam->ortho(0.0f, (float)screenWidth, (float)screenHeight, 0, -1.0f, 1.0f);
 }
 void GuiScreen::draw(Program* guiProgram) {
 	if (elements.empty()) return;

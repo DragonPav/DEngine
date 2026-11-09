@@ -12,5 +12,7 @@ private:
 public:
 	/** @param sz Scale value e.g. 0.7, 0.2 */
 	GuiText(std::wstring text, Vector2 pos, Vector2 sz, Camera* guiCam, BMFontManager* mgr);
+	/** @brief Set text */
+	void setText(std::wstring text);
 	virtual void draw(Program* guiProgram) override;
 };
